@@ -13,7 +13,7 @@ header:
  title: "Photography"
  subtitle: "by Shioji Ryosuke"
 footer:
- name: "ご来訪いただきありがとうございます。Shioji Ryosukeと申します。"
+ name: "ご来訪いただきありがとうございます。<br>Shioji Ryosukeと申します。"
  bio: "写真撮影が好きな関西の大学生です。WEBアプリ開発にも取り組んでいます。"
  github: ""
 web_design: "AJ"
@@ -23,6 +23,6 @@ exif: '[{"tag": "Model", "icon": "camera-retro"}, {"tag": "FNumber", "icon": "do
 social_urls:
   twitter: "https://x.com/Alshiel_1280"
   instagram: "https://www.instagram.com/r.s0g_/"
-  dribbble: "https://dribbble.com/"
+  dribbble: ""
   linkedin: "https://in.linkedin.com/in/"
   github: "https://www.github.com/Alshiel-1280"
