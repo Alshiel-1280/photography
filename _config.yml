@@ -14,7 +14,7 @@ header:
  subtitle: "by Shioji Ryosuke"
 footer:
  name: "ご来訪いただきありがとうございます。<br>Shioji Ryosukeと申します。"
- bio: "写真撮影が好きな関西の大学生です。WEBアプリ開発にも取り組んでいます。"
+ bio: "<h2>経歴<br>2023年3月　宮城県仙台第二高等学校卒業<br>2023年4月　関西大学経済学部経済学科入学<br><h2>カテゴリ<br>風景・ポートレート・コスプレ・馬<br><h2>所持機材<br>ボディ：Z6Ⅱ<br>レンズ：TAMRON 28-75mm F2.8, Nikkor AF-S 105mm F1.4E, Nikkor AF-P 70-300mm F4.5-5.6E<br>周辺機器：Godox AD200pro, Godox TT600, Godox XproⅡ-N, 他三脚・ソフトボックス等"
  github: ""
 web_design: "AJ"
 # Configure which exif data to display
