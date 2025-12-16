@@ -86,7 +86,7 @@ layout: default
             <div>
                 <section>
                     <h2>お問い合わせ</h2>
-                    <form method="post" action="https://script.google.com/macros/s/AKfycbxvf6vHyDM_F9b68AAbRyuObCXzBoSi1G4VNcJH4Rf6MZMp6IgFG2g7shcRGPh1Hec/exec?source=form">
+                    <form id="contact-form" method="post" target="hidden_iframe" action="https://script.google.com/macros/s/AKfycbxvf6vHyDM_F9b68AAbRyuObCXzBoSi1G4VNcJH4Rf6MZMp6IgFG2g7shcRGPh1Hec/exec?source=form">
                         <div class="field half first">
                             <input type="text" name="name" id="name" placeholder="お名前" required />
                         </div>
@@ -101,6 +101,31 @@ layout: default
                             <li><input type="reset" value="取り消す"/></li>
                         </ul>
                     </form>
+                    <!-- 送信後に画面遷移しないための隠しiframe -->
+                    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+                    <script>
+                      (function () {
+                        var submitted = false;
+                        var form = document.getElementById('contact-form');
+                        var iframe = document.getElementById('hidden_iframe');
+
+                        if (!form || !iframe) return;
+
+                        form.addEventListener('submit', function () {
+                          submitted = true;
+                        });
+
+                        iframe.addEventListener('load', function () {
+                          // 初回ロードやリロード時の誤作動を防ぐ
+                          if (!submitted) return;
+                          submitted = false;
+
+                          alert('送信しました。');
+                          form.reset();
+                        });
+                      })();
+                    </script>
                 </section>
             </div>
         </div>
