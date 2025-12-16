@@ -86,15 +86,15 @@ layout: default
             <div>
                 <section>
                     <h2>お問い合わせ</h2>
-                    <form method="post" action="#">
+                    <form method="post" action="https://script.google.com/macros/s/AKfycbxvf6vHyDM_F9b68AAbRyuObCXzBoSi1G4VNcJH4Rf6MZMp6IgFG2g7shcRGPh1Hec/exec?source=form">
                         <div class="field half first">
-                            <input type="text" name="name" id="name" placeholder="お名前"/>
+                            <input type="text" name="name" id="name" placeholder="お名前" required />
                         </div>
                         <div class="field half">
-                            <input type="text" name="email" id="email" placeholder="メールアドレス"/>
+                            <input type="email" name="email" id="email" placeholder="メールアドレス" required />
                         </div>
                         <div class="field">
-                            <textarea name="message" id="message" rows="4" placeholder="内容"></textarea>
+                            <textarea name="message" id="message" rows="4" placeholder="内容" required></textarea>
                         </div>
                         <ul class="actions">
                             <li><input type="submit" value="送信" class="special"/></li>
