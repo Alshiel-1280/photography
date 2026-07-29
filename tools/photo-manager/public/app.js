@@ -205,13 +205,18 @@ function renderCatalog() {
             card.classList.add('is-selected');
 
         const imageWrap = makeElement('div', 'photo-card-image');
-        const image = document.createElement('img');
-        image.alt = item.alt || item.title || item.file;
-        observeCatalogImage(image, item.itemType === 'pending' ? item.previewUrl : item.thumbUrl);
-        imageWrap.append(image);
+        const imageSource = item.itemType === 'pending' ? item.previewUrl : item.thumbUrl;
+        if (imageSource) {
+            const image = document.createElement('img');
+            image.alt = item.alt || item.title || item.file;
+            observeCatalogImage(image, imageSource);
+            imageWrap.append(image);
+        } else {
+            imageWrap.classList.add('is-staging');
+        }
 
         if (item.itemType === 'pending') {
-            imageWrap.append(makeElement('span', 'card-badge pending', '追加待ち'));
+            imageWrap.append(makeElement('span', 'card-badge pending', item.staging ? 'thumbs生成中' : '追加待ち'));
         } else if (item.itemType === 'orphan') {
             imageWrap.append(makeElement('span', 'card-badge pending', '未登録'));
         } else if (serviceReferences(item).length > 0) {
@@ -226,7 +231,9 @@ function renderCatalog() {
         meta.append(makeElement(
             'span',
             'reference-number',
-            item.itemType === 'pending' ? '未保存' : item.itemType === 'orphan' ? '登録待ち' : `${item.references.length}か所`
+            item.itemType === 'pending'
+                ? item.staging ? '処理中' : '未保存'
+                : item.itemType === 'orphan' ? '登録待ち' : `${item.references.length}か所`
         ));
         body.append(meta);
         card.append(imageWrap, body);
@@ -296,7 +303,11 @@ function openItem(item) {
     elements.detailForm.hidden = false;
     elements.detailPanel.classList.add('is-open');
     elements.detailImage.decoding = 'async';
-    elements.detailImage.src = item.itemType === 'pending' ? item.previewUrl : item.thumbUrl;
+    const detailSource = item.itemType === 'pending' ? item.previewUrl : item.thumbUrl;
+    if (detailSource)
+        elements.detailImage.src = detailSource;
+    else
+        elements.detailImage.removeAttribute('src');
     elements.detailImage.alt = item.alt || item.title || item.file;
     elements.detailFile.textContent = item.file;
     elements.detailTitleHeading.textContent = item.itemType === 'pending'
@@ -305,7 +316,9 @@ function openItem(item) {
             ? '未登録写真'
             : '写真の詳細';
     elements.pendingBadge.hidden = item.itemType === 'existing';
-    elements.pendingBadge.textContent = item.itemType === 'orphan' ? '未登録' : '追加待ち';
+    elements.pendingBadge.textContent = item.itemType === 'orphan'
+        ? '未登録'
+        : item.staging ? 'thumbs生成中' : '追加待ち';
     elements.newFileNameField.hidden = item.itemType === 'existing';
     elements.existingOptions.hidden = item.itemType !== 'existing';
     elements.outputName.value = item.outputName || '';
@@ -316,10 +329,11 @@ function openItem(item) {
     elements.photoOrder.value = item.order || '';
     elements.photoFeatured.checked = Boolean(item.featured);
     elements.saveButton.textContent = item.itemType === 'pending'
-        ? '生成して保存'
+        ? item.staging ? 'thumbs生成中' : '生成して保存'
         : item.itemType === 'orphan'
             ? '生成して登録'
             : '保存する';
+    elements.saveButton.disabled = Boolean(item.staging);
     updateAltCount();
 
     const references = item.itemType === 'pending' || item.itemType === 'orphan' ? [] : item.references;
@@ -394,7 +408,16 @@ async function deleteSelected() {
     try {
         let catalogNeedsRender = false;
         if (item.itemType === 'pending') {
-            URL.revokeObjectURL(item.previewUrl);
+            item.cancelled = true;
+            if (item.stageToken) {
+                const response = await fetch(`/api/staging/${encodeURIComponent(item.stageToken)}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok && response.status !== 404) {
+                    const result = await response.json();
+                    throw new Error(result.error || '追加待ち画像を削除できませんでした。');
+                }
+            }
             state.pending = state.pending.filter((pending) => pending.id !== item.id);
             catalogNeedsRender = true;
         } else {
@@ -460,6 +483,10 @@ async function saveSelected(event) {
     const item = selectedItem();
     if (!item)
         return;
+    if (item.staging) {
+        showToast('thumbsの生成が完了するまでお待ちください。', true);
+        return;
+    }
 
     const metadata = formMetadata(item);
     if (!metadata.title || !metadata.alt) {
@@ -474,11 +501,13 @@ async function saveSelected(event) {
     try {
         let response;
         if (item.itemType === 'pending') {
-            const query = new URLSearchParams({ meta: JSON.stringify(metadata) });
-            response = await fetch(`/api/photos/import?${query}`, {
+            response = await fetch('/api/photos/import-staged', {
                 method: 'POST',
-                headers: { 'Content-Type': item.fileObject.type || 'application/octet-stream' },
-                body: item.fileObject
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    stageToken: item.stageToken,
+                    metadata
+                })
             });
         } else if (!item.registered) {
             response = await fetch(`/api/photos/register/${encodeURIComponent(item.file)}`, {
@@ -499,7 +528,6 @@ async function saveSelected(event) {
             throw new Error(result.error || '保存に失敗しました。');
 
         if (item.itemType === 'pending') {
-            URL.revokeObjectURL(item.previewUrl);
             state.pending = state.pending.filter((pending) => pending.id !== item.id);
         }
         await loadCatalog();
@@ -524,6 +552,49 @@ function titleFromFile(fileName) {
         .trim();
 }
 
+async function discardStagedToken(token) {
+    if (!token)
+        return;
+    await fetch(`/api/staging/${encodeURIComponent(token)}`, { method: 'DELETE' }).catch(() => {});
+}
+
+async function stagePendingFile(file, item, autoOpen) {
+    try {
+        const response = await fetch(`/api/staging?${new URLSearchParams({ name: file.name })}`, {
+            method: 'POST',
+            headers: { 'Content-Type': file.type || 'application/octet-stream' },
+            body: file
+        });
+        const result = await response.json();
+        if (!response.ok)
+            throw new Error(result.error || 'thumbsを生成できませんでした。');
+        if (item.cancelled || !state.pending.some((pending) => pending.id === item.id)) {
+            await discardStagedToken(result.token);
+            return;
+        }
+
+        item.stageToken = result.token;
+        item.previewUrl = result.previewUrl;
+        item.staging = false;
+        renderCatalog();
+
+        if (state.selected && state.selected.id === item.id) {
+            elements.detailImage.src = item.previewUrl;
+            elements.pendingBadge.textContent = '追加待ち';
+            elements.saveButton.textContent = '生成して保存';
+            elements.saveButton.disabled = false;
+        } else if (autoOpen && !state.selected) {
+            openItem(item);
+        }
+    } catch (error) {
+        state.pending = state.pending.filter((pending) => pending.id !== item.id);
+        if (state.selected && state.selected.id === item.id)
+            closeDetail();
+        renderCatalog();
+        showToast(`${file.name}: ${error.message}`, true);
+    }
+}
+
 function addPendingFiles(fileList) {
     const added = [];
     Array.from(fileList).forEach((file) => {
@@ -535,8 +606,10 @@ function addPendingFiles(fileList) {
             id: `pending-${cryptoRandomId()}`,
             itemType: 'pending',
             file: file.name,
-            fileObject: file,
-            previewUrl: URL.createObjectURL(file),
+            previewUrl: '',
+            stageToken: '',
+            staging: true,
+            cancelled: false,
             title: titleFromFile(file.name),
             alt: '',
             category: 'portfolio',
@@ -547,10 +620,9 @@ function addPendingFiles(fileList) {
         };
         state.pending.push(item);
         added.push(item);
+        stagePendingFile(file, item, added.length === 1);
     });
     renderCatalog();
-    if (added.length > 0)
-        openItem(added[0]);
 }
 
 function cryptoRandomId() {

@@ -357,6 +357,17 @@ textarea:focus-visible {
     position: relative;
 }
 
+.photo-card-image.is-staging::after {
+    color: var(--muted);
+    content: "thumbs生成中";
+    font-size: 11px;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
 .photo-card-image img {
     display: block;
     height: 100%;

@@ -39,7 +39,7 @@ function createFixture() {
         }
     }));
 
-    const imageResult = spawnSync('magick', ['-size', '120x90', 'xc:#4f8a70', sourcePath], {
+    const imageResult = spawnSync('magick', ['-size', '800x600', 'xc:#4f8a70', sourcePath], {
         encoding: 'utf8'
     });
     assert.strictEqual(imageResult.status, 0, imageResult.stderr);
@@ -160,10 +160,40 @@ async function run() {
         featured: false,
         serviceKeys: ['test']
     };
-    await requestJson(`/api/photos/import?${new URLSearchParams({ meta: JSON.stringify(metadata) })}`, {
+
+    const staged = await requestJson(`/api/staging?${new URLSearchParams({ name: 'source.png' })}`, {
         method: 'POST',
         headers: { 'Content-Type': 'image/png' },
         body: fs.readFileSync(sourcePath)
+    });
+    assert.match(staged.token, /^[a-f0-9]{32}$/);
+    const previewResponse = await request(staged.previewUrl);
+    assert.strictEqual(previewResponse.status, 200);
+    assert.strictEqual(previewResponse.headers.get('content-type'), 'image/jpeg');
+    const previewCheckPath = path.join(fixtureRoot, 'preview-check.jpg');
+    fs.writeFileSync(previewCheckPath, Buffer.from(await previewResponse.arrayBuffer()));
+    const previewSize = spawnSync('magick', ['identify', '-format', '%wx%h', previewCheckPath], {
+        encoding: 'utf8'
+    });
+    assert.strictEqual(previewSize.status, 0, previewSize.stderr);
+    assert.strictEqual(previewSize.stdout, '384x288');
+
+    const discarded = await requestJson(`/api/staging?${new URLSearchParams({ name: 'source.png' })}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'image/png' },
+        body: fs.readFileSync(sourcePath)
+    });
+    await requestJson(`/api/staging/${discarded.token}`, { method: 'DELETE' });
+    const discardedPreview = await request(discarded.previewUrl);
+    assert.strictEqual(discardedPreview.status, 404);
+
+    await requestJson('/api/photos/import-staged', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            stageToken: staged.token,
+            metadata
+        })
     });
 
     assert.ok(fs.existsSync(path.join(fullsDir, 'new-photo.jpg')));

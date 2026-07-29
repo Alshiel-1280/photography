@@ -21,6 +21,8 @@ const allowedSourceExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.hei
 const allowedCategories = new Set(['portrait', 'profile', 'cosplay', 'event', 'animal', 'landscape', 'portfolio']);
 
 let mutationQueue = Promise.resolve();
+let stagingQueue = Promise.resolve();
+const stagedUploads = new Map();
 
 function readYaml(filePath, fallback) {
     if (!fs.existsSync(filePath))
@@ -74,6 +76,12 @@ function atomicWriteMany(files) {
 function serializeMutation(task) {
     const next = mutationQueue.then(task, task);
     mutationQueue = next.catch(() => {});
+    return next;
+}
+
+function serializeStaging(task) {
+    const next = stagingQueue.then(task, task);
+    stagingQueue = next.catch(() => {});
     return next;
 }
 
@@ -388,6 +396,45 @@ function runMagick(args) {
     });
 }
 
+function discardStagedUpload(token) {
+    const staged = stagedUploads.get(token);
+    if (!staged)
+        return false;
+    stagedUploads.delete(token);
+    fs.rmSync(staged.tempDir, { recursive: true, force: true });
+    return true;
+}
+
+async function stageUpload(source, originalName) {
+    const token = crypto.randomBytes(16).toString('hex');
+    const previewPath = path.join(source.tempDir, 'preview.jpg');
+
+    try {
+        await runMagick([
+            source.tempPath,
+            '-auto-orient',
+            '-resize', '384x384>',
+            '-strip',
+            '-quality', '78',
+            previewPath
+        ]);
+    } catch (error) {
+        fs.rmSync(source.tempDir, { recursive: true, force: true });
+        throw error;
+    }
+
+    stagedUploads.set(token, {
+        ...source,
+        originalName,
+        previewPath,
+        createdAt: Date.now()
+    });
+    return {
+        token,
+        previewUrl: `/media/staged/${token}`
+    };
+}
+
 async function receiveUpload(req, originalName) {
     const extension = path.extname(String(originalName || '')).toLowerCase();
     if (!allowedSourceExtensions.has(extension))
@@ -458,14 +505,18 @@ async function importPhoto(source, metadata) {
             '-quality', '88',
             fullTemp
         ]);
-        await runMagick([
-            source.tempPath,
-            '-auto-orient',
-            '-resize', '384x384>',
-            '-strip',
-            '-quality', '78',
-            thumbTemp
-        ]);
+        if (source.previewPath && fs.existsSync(source.previewPath)) {
+            fs.copyFileSync(source.previewPath, thumbTemp);
+        } else {
+            await runMagick([
+                source.tempPath,
+                '-auto-orient',
+                '-resize', '384x384>',
+                '-strip',
+                '-quality', '78',
+                thumbTemp
+            ]);
+        }
 
         photos.push(photo);
         selectedServices.forEach((serviceKey) => {
@@ -630,6 +681,52 @@ async function handleRequest(req, res) {
         return;
     }
 
+    if (req.method === 'POST' && url.pathname === '/api/staging') {
+        const originalName = url.searchParams.get('name') || '';
+        try {
+            const source = await receiveUpload(req, originalName);
+            const staged = await serializeStaging(() => stageUpload(source, originalName));
+            sendJson(res, 201, staged);
+        } catch (error) {
+            sendError(res, error);
+        }
+        return;
+    }
+
+    if (req.method === 'DELETE' && url.pathname.startsWith('/api/staging/')) {
+        const token = url.pathname.slice('/api/staging/'.length);
+        if (!/^[a-f0-9]{32}$/.test(token) || !discardStagedUpload(token)) {
+            sendJson(res, 404, { error: '追加待ちの写真が見つかりません。' });
+            return;
+        }
+        sendJson(res, 200, { token });
+        return;
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/photos/import-staged') {
+        try {
+            const input = await readJson(req);
+            const token = String(input.stageToken || '');
+            const staged = stagedUploads.get(token);
+            if (!staged)
+                throw new Error('追加待ちの写真が見つかりません。もう一度写真を追加してください。');
+            const metadata = {
+                ...(input.metadata || {}),
+                originalName: staged.originalName
+            };
+            const photo = await serializeMutation(() => importPhoto(staged, metadata));
+            stagedUploads.delete(token);
+            sendJson(res, 201, { photo });
+        } catch (error) {
+            for (const [token, staged] of stagedUploads) {
+                if (!fs.existsSync(staged.tempPath))
+                    stagedUploads.delete(token);
+            }
+            sendError(res, error);
+        }
+        return;
+    }
+
     if (req.method === 'PUT' && url.pathname.startsWith('/api/photos/')) {
         const fileName = path.basename(decodeURIComponent(url.pathname.slice('/api/photos/'.length)));
         try {
@@ -691,6 +788,17 @@ async function handleRequest(req, res) {
         return;
     }
 
+    const stagedMediaMatch = url.pathname.match(/^\/media\/staged\/([a-f0-9]{32})$/);
+    if (req.method === 'GET' && stagedMediaMatch) {
+        const staged = stagedUploads.get(stagedMediaMatch[1]);
+        if (!staged) {
+            sendJson(res, 404, { error: '追加待ちの写真が見つかりません。' });
+            return;
+        }
+        serveFile(res, staged.previewPath, 'image/jpeg', 'no-store');
+        return;
+    }
+
     const staticFiles = {
         '/': ['index.html', 'text/html; charset=utf-8'],
         '/app.js': ['app.js', 'application/javascript; charset=utf-8'],
@@ -726,4 +834,18 @@ server.on('error', (error) => {
 server.listen(port, host, () => {
     console.log(`Photo Desk: http://${host}:${port}`);
     console.log('終了するには Ctrl+C を押してください。');
+});
+
+const stagingCleanupTimer = setInterval(() => {
+    const expiration = Date.now() - (2 * 60 * 60 * 1000);
+    for (const [token, staged] of stagedUploads) {
+        if (staged.createdAt < expiration)
+            discardStagedUpload(token);
+    }
+}, 15 * 60 * 1000);
+stagingCleanupTimer.unref();
+
+process.on('exit', () => {
+    for (const token of Array.from(stagedUploads.keys()))
+        discardStagedUpload(token);
 });
