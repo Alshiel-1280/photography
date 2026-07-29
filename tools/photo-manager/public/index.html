@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Photo Desk</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true">PD</span>
+            <div>
+                <h1>Photo Desk</h1>
+                <p>Portfolio image manager</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <span id="save-state" class="save-state" aria-live="polite"></span>
+            <button id="add-button" class="button button-primary" type="button">
+                <span aria-hidden="true">＋</span>
+                写真を追加
+            </button>
+            <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/tiff,.heic,.tif,.tiff" multiple hidden>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <aside class="filters" aria-label="写真の絞り込み">
+            <div class="stats" aria-label="登録状況">
+                <div>
+                    <strong id="total-count">0</strong>
+                    <span>登録写真</span>
+                </div>
+                <div>
+                    <strong id="described-count">0</strong>
+                    <span>説明済み</span>
+                </div>
+                <div>
+                    <strong id="referenced-count">0</strong>
+                    <span>依頼ページ</span>
+                </div>
+            </div>
+
+            <label class="field-label" for="search-input">検索</label>
+            <div class="search-field">
+                <span aria-hidden="true">⌕</span>
+                <input id="search-input" type="search" placeholder="タイトル、alt、ファイル名">
+            </div>
+
+            <label class="field-label" for="category-filter">カテゴリ</label>
+            <select id="category-filter">
+                <option value="">すべて</option>
+                <option value="portrait">ポートレート</option>
+                <option value="profile">プロフィール</option>
+                <option value="cosplay">コスプレ</option>
+                <option value="event">イベント</option>
+                <option value="animal">動物</option>
+                <option value="landscape">風景</option>
+                <option value="portfolio">未分類</option>
+            </select>
+
+            <label class="field-label" for="reference-filter">使用場所</label>
+            <select id="reference-filter">
+                <option value="">すべて</option>
+                <option value="service">依頼ページで使用</option>
+                <option value="hero">メイン画像で使用</option>
+                <option value="unreferenced">依頼ページ未使用</option>
+                <option value="orphan">フォルダ内・未登録</option>
+                <option value="pending">追加待ち</option>
+            </select>
+
+            <label class="toggle-row">
+                <input id="needs-description-filter" type="checkbox">
+                <span>仮タイトル・altのみ</span>
+            </label>
+        </aside>
+
+        <section class="catalog" aria-labelledby="catalog-title">
+            <div class="catalog-toolbar">
+                <div>
+                    <h2 id="catalog-title">写真一覧</h2>
+                    <p id="result-count">読み込み中</p>
+                </div>
+                <label class="sort-control">
+                    <span>並び順</span>
+                    <select id="sort-select">
+                        <option value="order">ポートフォリオ順</option>
+                        <option value="newest">新しい順</option>
+                        <option value="title">タイトル順</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="empty-state" class="empty-state" hidden>
+                <strong>条件に合う写真がありません</strong>
+                <span>絞り込み条件を変更してください。</span>
+            </div>
+            <div id="photo-grid" class="photo-grid" aria-live="polite"></div>
+        </section>
+
+        <aside id="detail-panel" class="detail-panel" aria-label="写真の詳細">
+            <div id="detail-empty" class="detail-empty">
+                <span class="detail-empty-mark" aria-hidden="true">↖</span>
+                <strong>写真を選択してください</strong>
+                <p>タイトル、alt、使用場所をここで編集できます。</p>
+            </div>
+
+            <form id="detail-form" class="detail-form" hidden>
+                <div class="detail-preview">
+                    <img id="detail-image" alt="">
+                    <span id="pending-badge" class="pending-badge" hidden>追加待ち</span>
+                </div>
+
+                <div class="detail-heading">
+                    <div>
+                        <p id="detail-file" class="file-name"></p>
+                        <h2 id="detail-title-heading">写真の詳細</h2>
+                    </div>
+                    <button id="close-detail" class="icon-button" type="button" aria-label="詳細を閉じる" title="詳細を閉じる">×</button>
+                </div>
+
+                <div id="new-file-name-field" class="form-field" hidden>
+                    <label for="output-name">保存ファイル名 <span>任意</span></label>
+                    <div class="filename-input">
+                        <input id="output-name" name="outputName" type="text" placeholder="未入力なら自動生成">
+                        <span>.jpg</span>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="photo-title">タイトル</label>
+                    <input id="photo-title" name="title" type="text" required>
+                </div>
+
+                <div class="form-field">
+                    <div class="label-row">
+                        <label for="photo-alt">alt</label>
+                        <span id="alt-count">0文字</span>
+                    </div>
+                    <textarea id="photo-alt" name="alt" rows="3" required></textarea>
+                    <p>写真を見られない人にも内容が分かるよう、写っているものを自然な文章で記述します。</p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="photo-category">カテゴリ</label>
+                        <select id="photo-category" name="category">
+                            <option value="portrait">ポートレート</option>
+                            <option value="profile">プロフィール</option>
+                            <option value="cosplay">コスプレ</option>
+                            <option value="event">イベント</option>
+                            <option value="animal">動物</option>
+                            <option value="landscape">風景</option>
+                            <option value="portfolio">未分類</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="photo-area">地域</label>
+                        <input id="photo-area" name="area" type="text" placeholder="大阪、京都、関西など">
+                    </div>
+                </div>
+
+                <div id="existing-options" class="form-row">
+                    <div class="form-field">
+                        <label for="photo-order">表示順</label>
+                        <input id="photo-order" name="order" type="number" min="1" step="1">
+                    </div>
+                    <label class="featured-toggle">
+                        <input id="photo-featured" name="featured" type="checkbox">
+                        <span>
+                            <strong>注目作品</strong>
+                            <small>代表写真として管理</small>
+                        </span>
+                    </label>
+                </div>
+
+                <section class="references-section">
+                    <div class="section-heading">
+                        <h3 id="references-title">使用場所</h3>
+                        <span id="reference-count">0件</span>
+                    </div>
+                    <div id="references-list" class="references-list"></div>
+                </section>
+
+                <section id="new-services-section" class="references-section" hidden>
+                    <div class="section-heading">
+                        <h3>依頼ページにも追加</h3>
+                        <span>任意</span>
+                    </div>
+                    <div id="service-options" class="service-options"></div>
+                </section>
+
+                <div class="detail-actions">
+                    <button id="cancel-button" class="button" type="button">キャンセル</button>
+                    <button id="save-button" class="button button-primary" type="submit">保存する</button>
+                </div>
+            </form>
+        </aside>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script src="/app.js"></script>
+</body>
+</html>

@@ -43,6 +43,27 @@ Note: You only need to build the website if you make changes such as replacing t
 
 ### Add Portfolio Photos
 
+#### Photo Desk
+
+Run the local photo manager:
+
+```sh
+npm run photos:manage
+```
+
+Open `http://127.0.0.1:4173`. Photo Desk provides:
+
+- A thumbnail catalog with search and category filters.
+- Full-size detail previews.
+- Editing for title, alt, category, area, order, and featured status.
+- A list of portfolio, request-page, hero-image, sitemap, and OGP references.
+- Per-request-page alt editing.
+- Local image import with automatic JPEG naming and generation of `images/fulls` and `images/thumbs`.
+
+The manager binds only to `127.0.0.1` and is not intended to be deployed. Keep the terminal window open while using it, and press `Ctrl+C` to stop it.
+
+On macOS, you can also double-click `Photo Desk.command` in Finder. It starts the local manager and opens the browser automatically. Closing the Terminal window stops the manager.
+
 #### Recommended workflow
 
 1. Put copies of the original JPEG files directly in `images/`. Keep the master files outside this repository, and do not use a file name beginning with `_`.

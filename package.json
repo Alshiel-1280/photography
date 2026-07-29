@@ -8,6 +8,8 @@
     "resize": "gulp resize",
     "photos:sync": "node scripts/sync-photos.js",
     "photos:prepare": "gulp resize-images && node scripts/sync-photos.js",
+    "photos:manage": "node tools/photo-manager/server.js",
+    "test:photo-manager": "node tools/photo-manager/smoke-test.js",
     "test": "bundle exec jekyll build"
   },
   "repository": {
@@ -36,6 +38,7 @@
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^5.0.0",
     "gulp-uglify": "^3.0.0",
-    "sass": "^1.25.0"
+    "sass": "^1.25.0",
+    "yaml": "^2.9.0"
   }
 }
