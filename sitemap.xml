@@ -1,0 +1,31 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>{{ "/" | absolute_url }}</loc>
+    {% for photo in site.data.photos %}
+    <image:image>
+      <image:loc>{{ site.image_fulls_loc | append: "/" | append: photo.file | absolute_url }}</image:loc>
+      <image:title>{{ photo.title | xml_escape }}</image:title>
+      <image:caption>{{ photo.alt | xml_escape }}</image:caption>
+    </image:image>
+    {% endfor %}
+  </url>
+  <url><loc>{{ "/request/" | absolute_url }}</loc></url>
+  {% for service_item in site.data.services %}
+  <url>
+    <loc>{{ "/request/" | append: service_item[0] | append: "/" | absolute_url }}</loc>
+    {% for photo in service_item[1].photos %}
+    <image:image>
+      <image:loc>{{ site.image_fulls_loc | append: "/" | append: photo.file | absolute_url }}</image:loc>
+      <image:title>{{ service_item[1].name | xml_escape }}</image:title>
+      <image:caption>{{ photo.alt | xml_escape }}</image:caption>
+    </image:image>
+    {% endfor %}
+  </url>
+  {% endfor %}
+  <url><loc>{{ "/privacy/" | absolute_url }}</loc></url>
+</urlset>

@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="{{ site.lang | default: 'ja' }}">
 <head>
     {% include header.html %}
 </head>
-<body>
+<body{% if page.body_class %} class="{{ page.body_class }}"{% endif %}>
 
     {{ content }}
     

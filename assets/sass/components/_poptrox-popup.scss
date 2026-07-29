@@ -91,6 +91,23 @@
 			p {
 				color: _palette(fg-bold);
 			}
+
+			strong,
+			span {
+				display: block;
+			}
+
+			strong {
+				color: _palette(fg-bold);
+				font-size: 1.05em;
+				margin: 0 0 0.35em 0;
+			}
+
+			span {
+				color: _palette(fg);
+				font-size: 0.9em;
+				margin: 0 0 0.5em 0;
+			}
 		}
 
 		.loader {

@@ -1,133 +1,60 @@
 ---
 layout: default
+title: "Shioji Ryosuke Photography | 関西の撮影依頼・ポートフォリオ"
+description: "Shioji Ryosukeの写真ポートフォリオ。写真の雰囲気を見ながら、関西を中心としたポートレート、コスプレ、イベント、馬、風景撮影を相談できます。"
+og_image: "/images/fulls/P1044114.jpg"
 ---
 
 <!-- Wrapper -->
 <div id="wrapper">
 
-    <!-- Header -->
-    <header id="header">
-        <h1><a href="index.html"><strong>{{ site.header.title }}</strong> {{ site.header.subtitle }}</a></h1>
-        <nav>
-            <ul>
-                <li><a href="#footer" class="icon fa-info-circle">About</a></li>
-            </ul>
-        </nav>
-    </header>
+    {% include site-header.html %}
 
     <!-- Main -->
-    <div id="main" data-exif='{{ site.exif }}'>
-        {% for image in site.static_files %}
-        {% if image.path contains 'fulls' %}
-        <article class="thumb">
-            <a href="{{ site.baseurl }}{{ site.image_fulls_loc }}/{{ image.name }}" class="image">
-                <img src="{{ site.baseurl }}{{ site.image_thumbs_loc }}/{{ image.name }}" alt=""
-                     data-name="{{ image.name }}"/></a>
-            <!--<h2></h2>
-            <p></p>-->
+    <div id="main" data-exif='{{ site.exif }}' aria-label="Portfolio photos">
+        {% assign photos = site.data.photos | sort: "order" %}
+        {% for photo in photos %}
+        {% assign photo_title = photo.title | default: photo.file %}
+        {% assign photo_alt = photo.alt | default: site.description %}
+        <article class="thumb" data-category="{{ photo.category | default: 'portfolio' | escape }}">
+            <a href="{{ site.baseurl }}{{ site.image_fulls_loc }}/{{ photo.file }}" class="image"
+               data-title="{{ photo_title | escape }}"
+               data-caption="{{ photo_alt | escape }}">
+                <img src="{{ site.baseurl }}{{ site.image_thumbs_loc }}/{{ photo.file }}"
+                     alt="{{ photo_alt | escape }}"
+                     loading="{% if forloop.index <= 8 %}eager{% else %}lazy{% endif %}"
+                     {% if forloop.index == 1 %}fetchpriority="high"{% endif %}
+                     decoding="async"
+                     data-name="{{ photo.file | escape }}"/></a>
+            <h2>{{ photo_title }}</h2>
+            <p>{{ photo_alt }}</p>
         </article>
-        {% endif %}
         {% endfor %}
     </div>
 
-    <!-- Footer -->
-    <footer id="footer" class="panel">
-        <div class="inner split">
-            <div>
-                <section>
-                    <h2>{{ site.footer.name }}</h2>
-                    <p>{{ site.footer.bio }}</p>
-                    <p>{{ site.footer.github }}</p>
-                </section>
-                <section>
-                    <h2>Follow me on ...</h2>
-                    <ul class="icons">
-                        {% if site.social_urls.facebook %}
-                            <li>
-                                <a href="{{ site.social_urls.facebook }}" class="icon fa-facebook">
-                                    <span class="label">Facebook</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.twitter %}
-                            <li>
-                                <a href="{{ site.social_urls.twitter }}" class="icon fa-twitter">
-                                    <span class="label">Twitter</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.instagram %}
-                            <li>
-                                <a href="{{ site.social_urls.instagram }}" class="icon fa-instagram">
-                                    <span class="label">Instagram</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.github %}
-                            <li>
-                                <a href="{{ site.social_urls.github }}" class="icon fa-github">
-                                    <span class="label">GitHub</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if site.social_urls.linkedin %}
-                            <li>
-                                <a href="{{ site.social_urls.linkedin }}" class="icon fa-linkedin">
-                                    <span class="label">LinkedIn</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </section>
-                <p class="copyright">
-                    &copy; {{ site.author }}. Design: {{ site.web_design }}
-                </p>
+    <!-- Booking guide -->
+    <section id="booking" class="service-guide" aria-labelledby="booking-title">
+        <div class="service-guide__inner">
+            <div class="service-guide__intro">
+                <p class="kicker">Photo Session</p>
+                <h2 id="booking-title">写真の雰囲気を見たまま、撮影依頼まで進めるサイトへ</h2>
+                <p>掲載写真のトーンを保ちながら、{{ site.service_area }}で撮影依頼を受け付けています。用途に近いページで、作例と依頼方法を確認できます。</p>
+                <ul class="actions">
+                    <li><a href="{{ '/request/' | relative_url }}" class="button special" data-ga-event="request_menu" data-ga-label="home">撮影メニューを見る</a></li>
+                    <li><a href="#footer" class="button" data-ga-event="request_cta" data-ga-label="home">撮影を相談する</a></li>
+                </ul>
             </div>
-            <div>
-                <section>
-                    <h2>お問い合わせ</h2>
-                    <form id="contact-form" method="post" target="hidden_iframe" action="https://script.google.com/macros/s/AKfycbxvf6vHyDM_F9b68AAbRyuObCXzBoSi1G4VNcJH4Rf6MZMp6IgFG2g7shcRGPh1Hec/exec?source=form">
-                        <div class="field half first">
-                            <input type="text" name="name" id="name" placeholder="お名前" required />
-                        </div>
-                        <div class="field half">
-                            <input type="email" name="email" id="email" placeholder="メールアドレス" required />
-                        </div>
-                        <div class="field">
-                            <textarea name="message" id="message" rows="4" placeholder="内容" required></textarea>
-                        </div>
-                        <ul class="actions">
-                            <li><input type="submit" value="送信" class="special"/></li>
-                            <li><input type="reset" value="取り消す"/></li>
-                        </ul>
-                    </form>
-                    <!-- 送信後に画面遷移しないための隠しiframe -->
-                    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-
-                    <script>
-                      (function () {
-                        var submitted = false;
-                        var form = document.getElementById('contact-form');
-                        var iframe = document.getElementById('hidden_iframe');
-
-                        if (!form || !iframe) return;
-
-                        form.addEventListener('submit', function () {
-                          submitted = true;
-                        });
-
-                        iframe.addEventListener('load', function () {
-                          // 初回ロードやリロード時の誤作動を防ぐ
-                          if (!submitted) return;
-                          submitted = false;
-
-                          alert('送信しました。');
-                          form.reset();
-                        });
-                      })();
-                    </script>
-                </section>
+            <div class="service-guide__cards">
+                {% for service_item in site.data.services %}
+                <article class="service-guide__card">
+                    <h3><a href="{{ '/request/' | append: service_item[0] | append: '/' | relative_url }}">{{ service_item[1].name }}</a></h3>
+                    <p>{{ service_item[1].description }}</p>
+                    <a class="text-link" href="{{ '/request/' | append: service_item[0] | append: '/' | relative_url }}">作例と依頼方法を見る</a>
+                </article>
+                {% endfor %}
             </div>
         </div>
-    </footer>
+    </section>
+
+    {% include contact-panel.html %}
 </div>

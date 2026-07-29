@@ -1,0 +1,88 @@
+<footer id="footer" class="panel">
+    <div class="inner split">
+        <div>
+            <section>
+                <h2>{{ site.footer.name }}</h2>
+                <div class="profile-details">{{ site.footer.bio }}</div>
+            </section>
+            <section>
+                <h2>撮影できる内容</h2>
+                <ul>
+                    {% for service_item in site.data.services %}
+                    <li>
+                        <a href="{{ '/request/' | append: service_item[0] | append: '/' | relative_url }}">
+                            {{ service_item[1].name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            <section>
+                <h2>Follow</h2>
+                <ul class="icons">
+                    {% if site.social_urls.instagram %}
+                    <li><a href="{{ site.social_urls.instagram }}" class="icon fa-instagram" target="_blank" rel="noopener"><span class="label">Instagram</span></a></li>
+                    {% endif %}
+                    {% if site.social_urls.github %}
+                    <li><a href="{{ site.social_urls.github }}" class="icon fa-github" target="_blank" rel="noopener"><span class="label">GitHub</span></a></li>
+                    {% endif %}
+                    {% if site.social_urls.linkedin %}
+                    <li><a href="{{ site.social_urls.linkedin }}" class="icon fa-linkedin" target="_blank" rel="noopener"><span class="label">LinkedIn</span></a></li>
+                    {% endif %}
+                </ul>
+            </section>
+            <p><a href="{{ '/privacy/' | relative_url }}">プライバシーポリシー</a></p>
+            <p class="copyright">&copy; {{ site.author }}. Design: {{ site.web_design }}</p>
+        </div>
+        <div>
+            <section>
+                <h2>撮影依頼・お問い合わせ</h2>
+                <p>希望日、撮影場所、用途が未定でも相談できます。分かる範囲で入力してください。</p>
+                <form class="contact-form" method="post" target="contact_iframe" action="{{ site.contact_form_action }}">
+                    <div class="field half first">
+                        <label class="visually-hidden" for="contact-name">お名前</label>
+                        <input type="text" name="name" id="contact-name" placeholder="お名前" autocomplete="name" required />
+                    </div>
+                    <div class="field half">
+                        <label class="visually-hidden" for="contact-email">メールアドレス</label>
+                        <input type="email" name="email" id="contact-email" placeholder="メールアドレス" autocomplete="email" required />
+                    </div>
+                    <div class="field half first">
+                        <label class="visually-hidden" for="contact-service">撮影ジャンル</label>
+                        <div class="select-wrapper">
+                            <select name="service" id="contact-service" required>
+                                <option value="">撮影ジャンル</option>
+                                {% for category in site.service_categories %}
+                                <option value="{{ category }}" {% if include.selected_service == category %}selected{% endif %}>{{ category }}</option>
+                                {% endfor %}
+                                <option value="その他">その他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field half">
+                        <label class="visually-hidden" for="contact-date">希望日・時期</label>
+                        <input type="text" name="date" id="contact-date" placeholder="希望日・時期" />
+                    </div>
+                    <div class="field half first">
+                        <label class="visually-hidden" for="contact-location">撮影場所・地域</label>
+                        <input type="text" name="location" id="contact-location" placeholder="撮影場所・地域" />
+                    </div>
+                    <div class="field half">
+                        <label class="visually-hidden" for="contact-budget">予算感</label>
+                        <input type="text" name="budget" id="contact-budget" placeholder="予算感" />
+                    </div>
+                    <div class="field">
+                        <label class="visually-hidden" for="contact-message">相談内容</label>
+                        <textarea name="message" id="contact-message" rows="4" placeholder="用途、撮りたい雰囲気、参考写真、SNS掲載可否など" required></textarea>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="submit" value="相談内容を送信" class="special" /></li>
+                        <li><input type="reset" value="取り消す" /></li>
+                    </ul>
+                    <p class="contact-form__status" aria-live="polite"></p>
+                </form>
+                <iframe name="contact_iframe" class="contact-iframe" title="お問い合わせフォーム送信先"></iframe>
+            </section>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,155 @@
+---
+layout: default
+body_class: request-page
+---
+{% assign service = site.data.services[page.service_key] %}
+<div id="wrapper">
+    {% include site-header.html %}
+
+    <main>
+        <section class="request-hero" style="background-image: url('{{ service.hero_image | relative_url }}');" aria-labelledby="request-title">
+            <div class="request-hero__content">
+                <p class="kicker">Photo Session in Kansai</p>
+                <h1 id="request-title">{{ service.name }}</h1>
+                <p>{{ service.description }}</p>
+                <ul class="actions">
+                    <li><a href="#footer" class="button special" data-ga-event="request_cta" data-ga-label="{{ service.category }}">撮影を相談する</a></li>
+                    <li><a href="#works" class="button">作例を見る</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="request-band request-intro">
+            <div class="request-container request-intro__grid">
+                <div>
+                    <p class="kicker">For Your Purpose</p>
+                    <h2>{{ service.name }}について</h2>
+                    <p>{{ service.lead }}</p>
+                </div>
+                <div>
+                    <h3>このような撮影に</h3>
+                    <ul class="check-list">
+                        {% for item in service.suitable_for %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="works" class="request-works" aria-labelledby="works-title">
+            <div class="request-container request-section-heading">
+                <p class="kicker">Selected Works</p>
+                <h2 id="works-title">{{ service.nav_label }}の作例</h2>
+            </div>
+            <div id="main" class="request-gallery" data-exif='{{ site.exif }}'>
+                {% for photo in service.photos %}
+                <article class="thumb">
+                    <a href="{{ site.image_fulls_loc | append: '/' | append: photo.file | relative_url }}" class="image"
+                       data-title="{{ service.name | escape }}" data-caption="{{ photo.alt | escape }}">
+                        <img src="{{ site.image_thumbs_loc | append: '/' | append: photo.file | relative_url }}"
+                             alt="{{ photo.alt | escape }}" data-name="{{ photo.file | escape }}"
+                             loading="{% if forloop.index <= 2 %}eager{% else %}lazy{% endif %}" decoding="async" />
+                    </a>
+                    <h2>{{ service.nav_label }}</h2>
+                    <p>{{ photo.alt }}</p>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="request-band request-details" aria-labelledby="details-title">
+            <div class="request-container">
+                <p class="kicker">Before Booking</p>
+                <h2 id="details-title">撮影条件の目安</h2>
+                <div class="request-details__grid">
+                    {% for detail in service.details %}
+                    <article>
+                        <h3>{{ detail.title }}</h3>
+                        <p>{{ detail.text }}</p>
+                    </article>
+                    {% endfor %}
+                </div>
+                <p class="request-note">正式な条件は、相談内容を確認して双方で合意してから確定します。</p>
+            </div>
+        </section>
+
+        <section class="request-band request-process" aria-labelledby="process-title">
+            <div class="request-container">
+                <p class="kicker">How It Works</p>
+                <h2 id="process-title">相談から納品まで</h2>
+                <ol>
+                    {% for step in service.process %}
+                    <li>
+                        <span>{{ forloop.index }}</span>
+                        <div>
+                            <h3>{{ step.title }}</h3>
+                            <p>{{ step.text }}</p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </section>
+
+        <section class="request-band request-faq" aria-labelledby="faq-title">
+            <div class="request-container">
+                <p class="kicker">FAQ</p>
+                <h2 id="faq-title">よくある質問</h2>
+                {% for faq in service.faqs %}
+                <details>
+                    <summary>{{ faq.question }}</summary>
+                    <p>{{ faq.answer }}</p>
+                </details>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="request-closing">
+            <div class="request-container">
+                <p class="kicker">Contact</p>
+                <h2>撮りたい内容が固まっていなくても相談できます</h2>
+                <p>{{ service.area }}で対応します。希望日と場所が分かれば、まず実現方法を整理します。</p>
+                <a href="#footer" class="button special" data-ga-event="request_cta" data-ga-label="{{ service.category }}">撮影を相談する</a>
+            </div>
+        </section>
+    </main>
+
+    {% include contact-panel.html selected_service=service.category %}
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": {{ service.name | jsonify }},
+  "description": {{ service.description | jsonify }},
+  "url": {{ page.url | absolute_url | jsonify }},
+  "image": {{ service.hero_image | absolute_url | jsonify }},
+  "serviceType": {{ service.category | jsonify }},
+  "areaServed": {{ service.area_list | jsonify }},
+  "provider": {
+    "@type": "Person",
+    "name": {{ site.author | jsonify }},
+    "url": {{ "/" | absolute_url | jsonify }}
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in service.faqs %}
+    {
+      "@type": "Question",
+      "name": {{ faq.question | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ faq.answer | jsonify }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
+}
+</script>

@@ -1,13 +1,44 @@
-<title>{{ site.title }}</title>
+{% assign page_title = page.title | default: site.title %}
+{% assign page_description = page.description | default: site.description %}
+{% assign og_image = page.og_image | default: site.og_image %}
+<title>{{ page_title }}</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+<meta name="description" content="{{ page_description | strip_html | strip_newlines | escape }}"/>
+<meta name="robots" content="{{ page.robots | default: 'index,follow' }}"/>
+<meta name="theme-color" content="#1f2224"/>
+<link rel="canonical" href="{{ page.url | replace: 'index.html', '' | absolute_url }}"/>
+<meta property="og:site_name" content="{{ site.title | escape }}"/>
+<meta property="og:title" content="{{ page_title | escape }}"/>
+<meta property="og:description" content="{{ page_description | strip_html | strip_newlines | escape }}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="{{ page.url | replace: 'index.html', '' | absolute_url }}"/>
+<meta property="og:image" content="{{ og_image | absolute_url }}"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="{{ page_title | escape }}"/>
+<meta name="twitter:description" content="{{ page_description | strip_html | strip_newlines | escape }}"/>
+<meta name="twitter:image" content="{{ og_image | absolute_url }}"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Photographer",
+  "name": {{ site.author | jsonify }},
+  "url": {{ "/" | absolute_url | jsonify }},
+  "image": {{ og_image | absolute_url | jsonify }},
+  "description": {{ site.description | jsonify }},
+  "areaServed": {{ site.service_area | jsonify }},
+  "sameAs": [{% for url in site.same_as %}{{ url | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  "knowsAbout": [{% for category in site.service_categories %}{{ category | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  "makesOffer": [{% for category in site.service_categories %}{"@type":"Offer","itemOffered":{"@type":"Service","name":{{ category | jsonify }}}}{% unless forloop.last %},{% endunless %}{% endfor %}]
+}
+</script>
 <!--[if lte IE 8]>
-<script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-<link rel="stylesheet" href="assets/css/main.min.css"/>
+<script src="{{ '/assets/js/ie/html5shiv.js' | relative_url }}"></script><![endif]-->
+<link rel="stylesheet" href="{{ '/assets/css/main.min.css' | relative_url }}"/>
 <!--[if lte IE 9]>
-<link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
+<link rel="stylesheet" href="{{ '/assets/css/ie9.css' | relative_url }}"/><![endif]-->
 <!--[if lte IE 8]>
-<link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+<link rel="stylesheet" href="{{ '/assets/css/ie8.css' | relative_url }}"/><![endif]-->
 {% if site.google_analytics %}
 <!-- Google Analytics (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>

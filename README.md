@@ -1,6 +1,8 @@
 <img src="https://i.imgur.com/ZG4gSnb.jpeg" alt="demo"/>
 
 # Photography ![OpenCollective](https://opencollective.com/photography/tiers/backer/badge.svg?label=backer&color=brightgreen)
+
+This fork has been modified for Shioji Ryosuke's photography portfolio and booking-oriented website prototype on 2026-07-07. The original template is licensed under GPL-3.0, and this fork keeps that license.
 A jekyll website for photographers
 
 ## Highlights
@@ -38,6 +40,54 @@ And, of course, you don't want my name at the bottom to show up. You can change 
 Note: You only need to build the website if you make changes such as replacing the images, modifying the css styles, etc.
  
 ## ProTips
+
+### Add Portfolio Photos
+
+#### Recommended workflow
+
+1. Put original JPEG files directly in `images/`. Do not use a file name beginning with `_`.
+2. Run `npm run photos:prepare`.
+3. The command creates a 1024 px image in `images/fulls`, a 512 px thumbnail in `images/thumbs`, and adds an entry to `_data/photos.yml`.
+4. Edit the new entry in `_data/photos.yml`.
+
+Example:
+
+```yaml
+- file: "portrait-osaka-01.jpg"
+  title: "大阪の水辺で撮影したポートレート"
+  category: "portrait"
+  area: "大阪"
+  alt: "夕方の水辺で自然な表情を撮影した女性のポートレート"
+  order: 63
+  featured: false
+```
+
+Use `portrait`, `profile`, `cosplay`, `event`, `animal`, or `landscape` for `category`. Describe what is visibly shown in `alt`; do not list keywords that are unrelated to the image.
+
+If full-size and thumbnail images have already been prepared, place matching files in `images/fulls` and `images/thumbs`, then run `npm run photos:sync`.
+
+#### Add a photo to a request page
+
+Edit `_data/services.yml`, find the target service, and add the file under `photos`.
+
+```yaml
+photos:
+  - file: "portrait-osaka-01.jpg"
+    alt: "夕方の水辺で自然な表情を撮影した女性のポートレート"
+```
+
+#### Update service details
+
+All request-page copy is managed in `_data/services.yml`. Update `description`, `lead`, `details`, `process`, `faqs`, and `photos` for each service. Do not add city-name variants with otherwise identical copy.
+
+General site information, social links, Google Analytics, and the form destination are managed in `_config.yml`.
+
+After any change, run:
+
+```sh
+npm run build
+npm test
+```
 
 ### Resize Images
 I have made this as a [npm](https://www.npmjs.com) package with [gulp](http://gulpjs.com/) to __automate image resizing

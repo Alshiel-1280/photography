@@ -218,6 +218,8 @@
         var $main = $('#main'),
             exifDatas = {};
 
+        if ($main.length > 0) {
+
         // Thumbs.
         $main.children('.thumb').each(function () {
 
@@ -274,7 +276,16 @@
                         data = exifDatas[$image_img.data('name')] = getExifDataMarkup(this);
                     });
                 }
-                return data !== undefined ? '<p>' + data + '</p>' : ' ';
+                var title = $a.data('title');
+                var caption = $a.data('caption');
+                var template = '';
+                if (title)
+                    template += '<strong>' + title + '</strong>';
+                if (caption)
+                    template += '<span>' + caption + '</span>';
+                if (data !== undefined)
+                    template += '<p>' + data + '</p>';
+                return template !== '' ? template : ' ';
             },
             fadeSpeed: 300,
             onPopupClose: function () {
@@ -320,6 +331,47 @@
             }
             return template;
         }
+
+        }
+
+        // Contact form.
+        $('.contact-form').each(function () {
+            var $form = $(this),
+                $iframe = $('.contact-iframe'),
+                $status = $form.find('.contact-form__status'),
+                submitted = false;
+
+            $form.on('submit', function () {
+                submitted = true;
+                $status.text('送信しています。');
+            });
+
+            $iframe.on('load', function () {
+                if (!submitted)
+                    return;
+
+                submitted = false;
+                $status.text('送信しました。返信までお待ちください。');
+
+                if (typeof window.gtag === 'function') {
+                    window.gtag('event', 'generate_lead', {
+                        service: $form.find('[name="service"]').val() || '未選択'
+                    });
+                }
+
+                $form[0].reset();
+            });
+        });
+
+        // Booking CTA analytics.
+        $('[data-ga-event]').on('click', function () {
+            if (typeof window.gtag !== 'function')
+                return;
+
+            window.gtag('event', $(this).data('ga-event'), {
+                event_label: $(this).data('ga-label') || ''
+            });
+        });
 
     });
 

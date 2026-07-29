@@ -1,20 +1,38 @@
 # Base configs
 baseurl: ""
+url: "https://sy-ryosuke.site"
+lang: "ja"
 #baseurl: "" # Comment the above line and uncomment this to test the website locally
 image_fulls_loc: "/images/fulls"
 image_thumbs_loc: "/images/thumbs"
 google_analytics: "G-ZTXFW04G7P"
+contact_form_action: "https://script.google.com/macros/s/AKfycbxvf6vHyDM_F9b68AAbRyuObCXzBoSi1G4VNcJH4Rf6MZMp6IgFG2g7shcRGPh1Hec/exec?source=form"
+timezone: "Asia/Tokyo"
 
 # UI configs
-title: "Photography by Shioji Ryosuke"
-subtitle: "See the world through my eyes!"
+title: "Shioji Ryosuke Photography | 関西のポートレート・コスプレ撮影"
+subtitle: "Portfolio and photo session requests"
+description: "Shioji Ryosukeの写真ポートフォリオ。関西を中心にポートレート、コスプレ、イベント、馬、風景撮影の作品掲載と撮影依頼を受け付けています。"
 author: "Shioji Ryosuke"
+og_image: "/images/fulls/P1044114.jpg"
+service_area: "大阪・京都・兵庫・奈良を中心に全国相談可"
+service_categories:
+  - "ポートレート撮影"
+  - "プロフィール写真撮影"
+  - "コスプレ撮影"
+  - "イベント撮影"
+  - "馬・動物撮影"
+  - "風景・旅先撮影"
+same_as:
+  - "https://www.instagram.com/r.s0g_/"
+  - "https://www.linkedin.com/in/shioji-ryosuke"
+  - "https://www.github.com/Alshiel-1280"
 header:
  title: "Photography"
  subtitle: "by Shioji Ryosuke"
 footer:
  name: "ご来訪いただきありがとうございます。<br>Shioji Ryosukeと申します。"
- bio: "<h2>経歴</h2>2023年3月　宮城県仙台第二高等学校卒業<br>2023年4月　関西大学経済学部経済学科入学<br><br><h2>カテゴリ</h2>風景・ポートレート・コスプレ・馬<br><br><h2>所持機材</h2>ボディ：Z6Ⅱ, D810<br>レンズ：TAMRON 28-75mm F2.8, Nikkor AF-S 105mm F1.4E, Nikkor AF-P 70-300mm F4.5-5.6E<br>周辺機器：Godox AD200pro, Godox TT600, Godox XproⅡ-N, 他三脚・ソフトボックス等"
+ bio: "<h2>経歴</h2>2023年3月　宮城県仙台第二高等学校卒業<br>2023年4月　関西大学経済学部経済学科入学<br><br><h2>カテゴリ</h2>風景・ポートレート・コスプレ・馬<br><br><h2>所持機材</h2>ボディ：Z6Ⅱ, D810<br>レンズ：TAMRON 28-75mm F2.8, Nikkor AF-S 105mm F1.4E, Nikkor AF-P 70-300mm F4.5-5.6E<br>周辺機器：Godox AD200pro, Godox V1 2台, Godox V860II, Godox IT32, Godox X5N, Godox XproⅡ-N, 他三脚・ソフトボックス等"
  github: ""
 web_design: "AJ"
 # Configure which exif data to display
@@ -25,3 +43,18 @@ social_urls:
   instagram: "https://www.instagram.com/r.s0g_/"
   linkedin: "https://www.linkedin.com/in/shioji-ryosuke"
   github: "https://www.github.com/Alshiel-1280"
+
+exclude:
+  - ".github"
+  - ".sass-cache"
+  - ".travis.yml"
+  - "Gemfile"
+  - "Gemfile.lock"
+  - "README.md"
+  - "assets/sass"
+  - "gulpfile.js"
+  - "node_modules"
+  - "npmfile.js"
+  - "package-lock.json"
+  - "package.json"
+  - "scripts"

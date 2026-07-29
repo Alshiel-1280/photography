@@ -93,9 +93,9 @@
 		}
 	}
 
-	@include breakpoint(small) {
-		body {
-			padding: _size(header) 0 0 0;
+		@include breakpoint(small) {
+			body {
+				padding: _size(header) 0 0 0;
 		}
 
 		#header {
@@ -111,6 +111,10 @@
 
 			h1 {
 				font-size: 0.9em;
+				max-width: calc(100% - 10em);
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
 			}
 
 			nav {
@@ -118,7 +122,25 @@
 					> li {
 						a {
 							font-size: 0.9em;
-							padding: 0 1.15em;
+							overflow: hidden;
+							padding: 0;
+							position: relative;
+							text-indent: 4em;
+							white-space: nowrap;
+							width: 3.25em;
+
+							&.icon {
+								&:before {
+									float: none;
+									left: 0;
+									margin: 0;
+									position: absolute;
+									right: 0;
+									text-align: center;
+									text-indent: 0;
+									width: 100%;
+								}
+							}
 						}
 					}
 				}

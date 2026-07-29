@@ -1,0 +1,454 @@
+# Photo manifest. Run `npm run photos:sync` after adding images.
+
+- file: "P1044114.jpg"
+  title: "陰影を生かした男性ポートレート"
+  category: "profile"
+  area: "大阪"
+  alt: "陰影を生かして撮影した男性のプロフィールポートレート"
+  order: 1
+  featured: true
+
+- file: "Z62_1081.jpg"
+  title: "Z62 1081"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 1081」"
+  order: 2
+  featured: false
+
+- file: "Z62_1087.jpg"
+  title: "Z62 1087"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 1087」"
+  order: 3
+  featured: false
+
+- file: "Z62_1337.jpg"
+  title: "Z62 1337"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 1337」"
+  order: 4
+  featured: false
+
+- file: "Z62_1617-強化-NR.jpg"
+  title: "劇場のコスプレ作品撮影"
+  category: "cosplay"
+  area: "関西"
+  alt: "劇場の座席を生かして撮影したコスプレ作品"
+  order: 5
+  featured: false
+
+- file: "Z62_2420.jpg"
+  title: "Z62 2420"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2420」"
+  order: 6
+  featured: false
+
+- file: "Z62_2559.jpg"
+  title: "落ち着いた男性宣材写真"
+  category: "profile"
+  area: "大阪"
+  alt: "落ち着いた衣装と背景で撮影した男性の宣材写真"
+  order: 7
+  featured: false
+
+- file: "Z62_2722.jpg"
+  title: "Z62 2722"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2722」"
+  order: 8
+  featured: false
+
+- file: "Z62_2755.jpg"
+  title: "Z62 2755"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2755」"
+  order: 9
+  featured: false
+
+- file: "Z62_2818-強化-NR.jpg"
+  title: "赤い衣装のロケーション撮影"
+  category: "cosplay"
+  area: "関西"
+  alt: "建築物と赤い衣装を組み合わせたコスプレ撮影"
+  order: 10
+  featured: false
+
+- file: "Z62_2862.1.jpg"
+  title: "Z62 2862.1"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2862.1」"
+  order: 11
+  featured: false
+
+- file: "Z62_3056.jpg"
+  title: "Z62 3056"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3056」"
+  order: 12
+  featured: false
+
+- file: "Z62_3130.jpg"
+  title: "Z62 3130"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3130」"
+  order: 13
+  featured: false
+
+- file: "Z62_3136.jpg"
+  title: "Z62 3136"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3136」"
+  order: 14
+  featured: false
+
+- file: "Z62_3323.jpg"
+  title: "Z62 3323"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3323」"
+  order: 15
+  featured: false
+
+- file: "Z62_3399.jpg"
+  title: "Z62 3399"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3399」"
+  order: 16
+  featured: false
+
+- file: "Z62_3444.jpg"
+  title: "Z62 3444"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3444」"
+  order: 17
+  featured: false
+
+- file: "Z62_3503.jpg"
+  title: "Z62 3503"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3503」"
+  order: 18
+  featured: false
+
+- file: "Z62_3978.jpg"
+  title: "Z62 3978"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3978」"
+  order: 19
+  featured: false
+
+- file: "Z62_4089.jpg"
+  title: "Z62 4089"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4089」"
+  order: 20
+  featured: false
+
+- file: "Z62_4259.jpg"
+  title: "Z62 4259"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4259」"
+  order: 21
+  featured: false
+
+- file: "Z62_4283.jpg"
+  title: "緑の小径のポートレート"
+  category: "portrait"
+  area: "関西"
+  alt: "緑の小径でロケーションの奥行きを生かした女性ポートレート"
+  order: 22
+  featured: false
+
+- file: "Z62_4314.jpg"
+  title: "Z62 4314"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4314」"
+  order: 23
+  featured: false
+
+- file: "Z62_4450-2.jpg"
+  title: "Z62 4450 2"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4450 2」"
+  order: 24
+  featured: false
+
+- file: "Z62_4723.jpg"
+  title: "Z62 4723"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4723」"
+  order: 25
+  featured: false
+
+- file: "Z62_4993.jpg"
+  title: "Z62 4993"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4993」"
+  order: 26
+  featured: false
+
+- file: "Z62_5125_(2).jpg"
+  title: "Z62 5125 (2)"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5125 (2)」"
+  order: 27
+  featured: false
+
+- file: "Z62_5212.jpg"
+  title: "Z62 5212"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5212」"
+  order: 28
+  featured: false
+
+- file: "Z62_5339-2.jpg"
+  title: "Z62 5339 2"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5339 2」"
+  order: 29
+  featured: false
+
+- file: "Z62_5545.jpg"
+  title: "Z62 5545"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5545」"
+  order: 30
+  featured: false
+
+- file: "Z62_5571.jpg"
+  title: "Z62 5571"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5571」"
+  order: 31
+  featured: false
+
+- file: "Z62_5635.jpg"
+  title: "Z62 5635"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5635」"
+  order: 32
+  featured: false
+
+- file: "Z62_5743.jpg"
+  title: "花と小道具のコスプレ作品"
+  category: "cosplay"
+  area: "関西"
+  alt: "花と小道具を使って世界観を表現したコスプレ写真"
+  order: 33
+  featured: false
+
+- file: "Z62_5769.jpg"
+  title: "Z62 5769"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5769」"
+  order: 34
+  featured: false
+
+- file: "Z62_5771.jpg"
+  title: "Z62 5771"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5771」"
+  order: 35
+  featured: false
+
+- file: "Z62_5800.jpg"
+  title: "青い衣装のコスプレ作品"
+  category: "cosplay"
+  area: "関西"
+  alt: "白い背景と青い衣装を生かしたコスプレ作品"
+  order: 36
+  featured: false
+
+- file: "Z62_5860.jpg"
+  title: "Z62 5860"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5860」"
+  order: 37
+  featured: false
+
+- file: "Z62_5918.jpg"
+  title: "Z62 5918"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5918」"
+  order: 38
+  featured: false
+
+- file: "Z62_6094.jpg"
+  title: "親しみやすいプロフィール写真"
+  category: "profile"
+  area: "大阪"
+  alt: "明るい背景で親しみやすい表情を捉えたプロフィール写真"
+  order: 39
+  featured: false
+
+- file: "Z62_6362.jpg"
+  title: "水辺の自然なポートレート"
+  category: "portrait"
+  area: "関西"
+  alt: "関西の水辺で撮影した青い衣装の自然なポートレート"
+  order: 40
+  featured: false
+
+- file: "Z62_6395.jpg"
+  title: "光を生かした屋外ポートレート"
+  category: "portrait"
+  area: "関西"
+  alt: "水辺の光を生かした明るい屋外ポートレート"
+  order: 41
+  featured: true
+
+- file: "Z62_6449.jpg"
+  title: "都市の水辺のポートレート"
+  category: "portrait"
+  area: "関西"
+  alt: "都市の水辺を背景にした女性のロケーションポートレート"
+  order: 42
+  featured: false
+
+- file: "Z62_6519.jpg"
+  title: "柔らかな自然光のポートレート"
+  category: "portrait"
+  area: "関西"
+  alt: "柔らかな自然光で撮影した女性のポートレート"
+  order: 43
+  featured: false
+
+- file: "Z62_6556.jpg"
+  title: "落ち着いた表情のポートレート"
+  category: "portrait"
+  area: "関西"
+  alt: "落ち着いた表情を引き出した女性のポートレート"
+  order: 44
+  featured: false
+
+- file: "Z62_6708.jpg"
+  title: "男性のビジネスプロフィール"
+  category: "profile"
+  area: "大阪"
+  alt: "スーツ姿の男性を明るい背景で撮影したビジネスプロフィール"
+  order: 45
+  featured: false
+
+- file: "Z62_6745.jpg"
+  title: "スーツのビジネスプロフィール"
+  category: "profile"
+  area: "大阪"
+  alt: "スーツの着こなしが伝わるビジネス用プロフィール写真"
+  order: 46
+  featured: false
+
+- file: "Z62_6764.jpg"
+  title: "緑のロケーションポートレート"
+  category: "portrait"
+  area: "関西"
+  alt: "緑のロケーションで自然な表情を捉えたポートレート"
+  order: 47
+  featured: false
+
+- file: "Z62_6772.jpg"
+  title: "Z62 6772"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6772」"
+  order: 48
+  featured: false
+
+- file: "Z62_6869.jpg"
+  title: "Z62 6869"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6869」"
+  order: 49
+  featured: false
+
+- file: "Z62_6899.jpg"
+  title: "Z62 6899"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6899」"
+  order: 50
+  featured: false
+
+- file: "Z62_6975.jpg"
+  title: "Z62 6975"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6975」"
+  order: 51
+  featured: false
+
+- file: "Z62_7026.jpg"
+  title: "Z62 7026"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 7026」"
+  order: 52
+  featured: false
+
+- file: "Z62_7089.jpg"
+  title: "チームプロフィール"
+  category: "profile"
+  area: "大阪"
+  alt: "チームの雰囲気が伝わる複数人のプロフィール写真"
+  order: 53
+  featured: false
+
+- file: "Z62_7232.jpg"
+  title: "Z62 7232"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 7232」"
+  order: 54
+  featured: false
+
+- file: "Z62_7269.jpg"
+  title: "Z62 7269"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 7269」"
+  order: 55
+  featured: false
+
+- file: "Z62_8555.jpg"
+  title: "Z62 8555"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8555」"
+  order: 56
+  featured: false
+
+- file: "Z62_8580.jpg"
+  title: "Z62 8580"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8580」"
+  order: 57
+  featured: false
+
+- file: "Z62_8667.jpg"
+  title: "イベント会場のコスプレ撮影"
+  category: "cosplay"
+  area: "関西"
+  alt: "イベント会場でキャラクターの表情を捉えたコスプレ写真"
+  order: 58
+  featured: false
+
+- file: "Z62_8676.jpg"
+  title: "Z62 8676"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8676」"
+  order: 59
+  featured: false
+
+- file: "Z62_8704.jpg"
+  title: "Z62 8704"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8704」"
+  order: 60
+  featured: false
+
+- file: "Z62_8731.jpg"
+  title: "逆光のコスプレポートレート"
+  category: "cosplay"
+  area: "関西"
+  alt: "逆光と衣装の色を生かしたコスプレポートレート"
+  order: 61
+  featured: true
+
+- file: "Z62_8749_(2).jpg"
+  title: "Z62 8749 (2)"
+  category: "portfolio"
+  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8749 (2)」"
+  order: 62
+  featured: false
