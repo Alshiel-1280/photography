@@ -45,10 +45,10 @@ Note: You only need to build the website if you make changes such as replacing t
 
 #### Recommended workflow
 
-1. Put original JPEG files directly in `images/`. Do not use a file name beginning with `_`.
+1. Put copies of the original JPEG files directly in `images/`. Keep the master files outside this repository, and do not use a file name beginning with `_`.
 2. Run `npm run photos:prepare`.
-3. The command creates a 1024 px image in `images/fulls`, a 512 px thumbnail in `images/thumbs`, and adds an entry to `_data/photos.yml`.
-4. Edit the new entry in `_data/photos.yml`.
+3. The command creates a 1024 px image in `images/fulls`, a 512 px thumbnail in `images/thumbs`, and adds an entry to `_data/photos.yml`. The input copies remain in `images/`.
+4. After checking the generated files, remove the input copies from `images/` manually and edit the new entry in `_data/photos.yml`.
 
 Example:
 

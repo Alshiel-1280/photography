@@ -7,7 +7,7 @@
     "build": "gulp build",
     "resize": "gulp resize",
     "photos:sync": "node scripts/sync-photos.js",
-    "photos:prepare": "gulp resize && node scripts/sync-photos.js",
+    "photos:prepare": "gulp resize-images && node scripts/sync-photos.js",
     "test": "bundle exec jekyll build"
   },
   "repository": {
