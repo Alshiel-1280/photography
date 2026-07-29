@@ -86,6 +86,10 @@ async function requestJson(url, options) {
     return body;
 }
 
+async function request(url, options) {
+    return fetch(`http://127.0.0.1:${port}${url}`, options);
+}
+
 async function run() {
     createFixture();
     await startServer();
@@ -96,6 +100,9 @@ async function run() {
     assert.ok(initial.photos.some((photo) => photo.file === '_orphan.jpg' && photo.registered === false));
     assert.strictEqual(initial.photos[0].references.filter((ref) => ref.kind === 'service').length, 1);
     assert.strictEqual(initial.photos[0].references.filter((ref) => ref.kind === 'hero').length, 1);
+
+    const favicon = await request('/favicon.ico');
+    assert.strictEqual(favicon.status, 204);
 
     await requestJson('/api/photos/existing.jpg', {
         method: 'PUT',

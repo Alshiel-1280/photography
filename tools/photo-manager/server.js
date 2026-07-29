@@ -89,7 +89,26 @@ function normalizePhoto(photo, index) {
     };
 }
 
-function collectReferences(photo, services, registered = true) {
+function readReferenceSources() {
+    return [
+        '_config.yml',
+        'request/index.html',
+        'request/portrait-kansai/index.html',
+        'request/profile-photo-osaka/index.html',
+        'request/cosplay-kansai/index.html',
+        'privacy/index.html'
+    ].flatMap((relativePath) => {
+        const absolutePath = path.join(root, relativePath);
+        if (!fs.existsSync(absolutePath))
+            return [];
+        return [{
+            relativePath,
+            source: fs.readFileSync(absolutePath, 'utf8')
+        }];
+    });
+}
+
+function collectReferences(photo, services, registered = true, sourceFiles = readReferenceSources()) {
     const references = registered
         ? [
             {
@@ -136,20 +155,7 @@ function collectReferences(photo, services, registered = true) {
         });
     });
 
-    const sourceFiles = [
-        '_config.yml',
-        'request/index.html',
-        'request/portrait-kansai/index.html',
-        'request/profile-photo-osaka/index.html',
-        'request/cosplay-kansai/index.html',
-        'privacy/index.html'
-    ];
-
-    sourceFiles.forEach((relativePath) => {
-        const absolutePath = path.join(root, relativePath);
-        if (!fs.existsSync(absolutePath))
-            return;
-        const source = fs.readFileSync(absolutePath, 'utf8');
+    sourceFiles.forEach(({ relativePath, source }) => {
         if (!source.includes(photo.file))
             return;
         references.push({
@@ -167,6 +173,7 @@ function collectReferences(photo, services, registered = true) {
 function getCatalog() {
     const photos = readYaml(photosPath, []).map(normalizePhoto);
     const services = readYaml(servicesPath, {});
+    const sourceFiles = readReferenceSources();
     const registeredFiles = new Set(photos.map((photo) => photo.file));
     const fullFiles = fs.readdirSync(fullsDir)
         .filter((file) => allowedSourceExtensions.has(path.extname(file).toLowerCase()))
@@ -199,14 +206,14 @@ function getCatalog() {
             thumbUrl: fs.existsSync(path.join(thumbsDir, photo.file))
                 ? `/media/thumbs/${encodeURIComponent(photo.file)}`
                 : `/media/fulls/${encodeURIComponent(photo.file)}`,
-            references: collectReferences(photo, services, registered)
+            references: collectReferences(photo, services, registered, sourceFiles)
         })),
         services: serviceOptions,
         categories: Array.from(allowedCategories),
         stats: {
             total: catalogPhotos.length,
             described: photos.filter((photo) => !photo.alt.includes('ポートフォリオ作品「')).length,
-            referenced: photos.filter((photo) => collectReferences(photo, services, true).some((ref) => ref.kind === 'service' || ref.kind === 'hero')).length,
+            referenced: photos.filter((photo) => collectReferences(photo, services, true, sourceFiles).some((ref) => ref.kind === 'service' || ref.kind === 'hero')).length,
             unregistered: orphans.length
         }
     };
@@ -554,6 +561,12 @@ async function handleRequest(req, res) {
 
     if (req.method === 'GET' && url.pathname === '/api/photos') {
         sendJson(res, 200, getCatalog());
+        return;
+    }
+
+    if (req.method === 'GET' && url.pathname === '/favicon.ico') {
+        res.writeHead(204, { 'Cache-Control': 'private, max-age=86400' });
+        res.end();
         return;
     }
 

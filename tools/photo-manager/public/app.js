@@ -192,6 +192,18 @@ function renderCatalog() {
     });
 }
 
+function updateSelectedCard() {
+    elements.photoGrid.querySelectorAll('.photo-card.is-selected').forEach((card) => {
+        card.classList.remove('is-selected');
+    });
+    if (!state.selected)
+        return;
+    const selectedCard = Array.from(elements.photoGrid.querySelectorAll('.photo-card'))
+        .find((card) => card.dataset.id === state.selected.id);
+    if (selectedCard)
+        selectedCard.classList.add('is-selected');
+}
+
 function createReferenceItem(reference) {
     const item = makeElement('div', 'reference-item');
     const heading = makeElement('div', 'reference-item-heading');
@@ -289,7 +301,7 @@ function openItem(item) {
     }
 
     renderServiceOptions(item);
-    renderCatalog();
+    updateSelectedCard();
 }
 
 function closeDetail() {
@@ -297,7 +309,7 @@ function closeDetail() {
     elements.detailForm.hidden = true;
     elements.detailEmpty.hidden = false;
     elements.detailPanel.classList.remove('is-open');
-    renderCatalog();
+    updateSelectedCard();
 }
 
 function selectedItem() {
