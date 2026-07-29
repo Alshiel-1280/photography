@@ -15,11 +15,14 @@ const state = {
     services: [],
     pending: [],
     selected: null,
-    toastTimer: null
+    toastTimer: null,
+    detailImageRequest: 0,
+    imageObserver: null
 };
 
 const elements = {
     addButton: document.getElementById('add-button'),
+    catalog: document.querySelector('.catalog'),
     fileInput: document.getElementById('file-input'),
     searchInput: document.getElementById('search-input'),
     categoryFilter: document.getElementById('category-filter'),
@@ -55,6 +58,11 @@ const elements = {
     referencesList: document.getElementById('references-list'),
     newServicesSection: document.getElementById('new-services-section'),
     serviceOptions: document.getElementById('service-options'),
+    deleteButton: document.getElementById('delete-button'),
+    deleteDialog: document.getElementById('delete-dialog'),
+    deleteDialogDescription: document.getElementById('delete-dialog-description'),
+    deleteCancelButton: document.getElementById('delete-cancel-button'),
+    deleteConfirmButton: document.getElementById('delete-confirm-button'),
     cancelButton: document.getElementById('cancel-button'),
     saveButton: document.getElementById('save-button'),
     saveState: document.getElementById('save-state'),
@@ -141,8 +149,48 @@ function makeElement(tagName, className, text) {
     return element;
 }
 
+function observeCatalogImage(image, source) {
+    image.dataset.src = source;
+    image.decoding = 'async';
+    image.loading = 'lazy';
+    image.addEventListener('load', () => image.classList.add('is-loaded'), { once: true });
+    image.addEventListener('error', () => {
+        image.style.display = 'none';
+        image.parentElement.dataset.failed = 'true';
+    }, { once: true });
+
+    if (state.imageObserver) {
+        state.imageObserver.observe(image);
+        return;
+    }
+    image.src = source;
+}
+
+function resetImageObserver() {
+    if (state.imageObserver)
+        state.imageObserver.disconnect();
+    if (!('IntersectionObserver' in window)) {
+        state.imageObserver = null;
+        return;
+    }
+    state.imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting)
+                return;
+            const image = entry.target;
+            image.src = image.dataset.src;
+            observer.unobserve(image);
+        });
+    }, {
+        root: elements.catalog,
+        rootMargin: '180px 0px',
+        threshold: 0.01
+    });
+}
+
 function renderCatalog() {
     const items = filteredItems();
+    resetImageObserver();
     elements.photoGrid.replaceChildren();
     elements.resultCount.textContent = `${items.length}件を表示`;
     elements.emptyState.hidden = items.length > 0;
@@ -158,13 +206,8 @@ function renderCatalog() {
 
         const imageWrap = makeElement('div', 'photo-card-image');
         const image = document.createElement('img');
-        image.src = item.itemType === 'pending' ? item.previewUrl : item.thumbUrl;
         image.alt = item.alt || item.title || item.file;
-        image.loading = 'lazy';
-        image.addEventListener('error', () => {
-            image.style.display = 'none';
-            imageWrap.dataset.failed = 'true';
-        });
+        observeCatalogImage(image, item.itemType === 'pending' ? item.previewUrl : item.thumbUrl);
         imageWrap.append(image);
 
         if (item.itemType === 'pending') {
@@ -248,10 +291,12 @@ function renderServiceOptions(item) {
 
 function openItem(item) {
     state.selected = { id: item.id, type: item.itemType };
+    const imageRequest = ++state.detailImageRequest;
     elements.detailEmpty.hidden = true;
     elements.detailForm.hidden = false;
     elements.detailPanel.classList.add('is-open');
-    elements.detailImage.src = item.itemType === 'pending' ? item.previewUrl : item.fullUrl;
+    elements.detailImage.decoding = 'async';
+    elements.detailImage.src = item.itemType === 'pending' ? item.previewUrl : item.thumbUrl;
     elements.detailImage.alt = item.alt || item.title || item.file;
     elements.detailFile.textContent = item.file;
     elements.detailTitleHeading.textContent = item.itemType === 'pending'
@@ -302,14 +347,76 @@ function openItem(item) {
 
     renderServiceOptions(item);
     updateSelectedCard();
+
+    if (item.itemType !== 'pending' && item.fullUrl !== item.thumbUrl) {
+        window.setTimeout(() => {
+            const fullImage = new Image();
+            fullImage.decoding = 'async';
+            fullImage.onload = () => {
+                if (state.detailImageRequest === imageRequest)
+                    elements.detailImage.src = item.fullUrl;
+            };
+            fullImage.src = item.fullUrl;
+        }, 0);
+    }
 }
 
 function closeDetail() {
+    state.detailImageRequest += 1;
     state.selected = null;
     elements.detailForm.hidden = true;
     elements.detailEmpty.hidden = false;
     elements.detailPanel.classList.remove('is-open');
     updateSelectedCard();
+}
+
+function requestDeleteSelected() {
+    const item = selectedItem();
+    if (!item)
+        return;
+
+    const description = item.itemType === 'pending'
+        ? '追加待ちから取り除きます。元の写真ファイルは削除されません。'
+        : 'fulls・thumbs・ポートフォリオ管理データから削除します。この操作は取り消せません。';
+    elements.deleteDialogDescription.textContent = `「${item.title || item.file}」を${description}`;
+    elements.deleteDialog.showModal();
+}
+
+async function deleteSelected() {
+    const item = selectedItem();
+    if (!item)
+        return;
+    elements.deleteDialog.close();
+    elements.deleteButton.disabled = true;
+    elements.saveButton.disabled = true;
+    elements.saveState.textContent = '削除しています…';
+
+    try {
+        let catalogNeedsRender = false;
+        if (item.itemType === 'pending') {
+            URL.revokeObjectURL(item.previewUrl);
+            state.pending = state.pending.filter((pending) => pending.id !== item.id);
+            catalogNeedsRender = true;
+        } else {
+            const response = await fetch(`/api/photos/${encodeURIComponent(item.file)}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (!response.ok)
+                throw new Error(result.error || '削除に失敗しました。');
+            await loadCatalog();
+        }
+        closeDetail();
+        if (catalogNeedsRender)
+            renderCatalog();
+        showToast('写真を削除しました。');
+    } catch (error) {
+        showToast(error.message, true);
+    } finally {
+        elements.deleteButton.disabled = false;
+        elements.saveButton.disabled = false;
+        elements.saveState.textContent = '';
+    }
 }
 
 function selectedItem() {
@@ -498,6 +605,9 @@ elements.fileInput.addEventListener('change', () => {
 });
 elements.closeDetail.addEventListener('click', closeDetail);
 elements.cancelButton.addEventListener('click', closeDetail);
+elements.deleteButton.addEventListener('click', requestDeleteSelected);
+elements.deleteCancelButton.addEventListener('click', () => elements.deleteDialog.close());
+elements.deleteConfirmButton.addEventListener('click', deleteSelected);
 elements.detailForm.addEventListener('submit', saveSelected);
 elements.photoAlt.addEventListener('input', updateAltCount);
 window.addEventListener('keydown', (event) => {

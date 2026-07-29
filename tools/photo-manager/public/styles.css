@@ -149,6 +149,25 @@ textarea:focus-visible {
     background: var(--accent-hover);
 }
 
+.button-danger {
+    border-color: #b44a40;
+    color: #9a3028;
+}
+
+.button-danger:hover {
+    background: #f8e8e6;
+}
+
+.button-danger-solid {
+    background: #9a3028;
+    border-color: #9a3028;
+    color: #fff;
+}
+
+.button-danger-solid:hover {
+    background: #7d241e;
+}
+
 .workspace {
     display: grid;
     grid-template-columns: 238px minmax(420px, 1fr) 410px;
@@ -342,7 +361,13 @@ textarea:focus-visible {
     display: block;
     height: 100%;
     object-fit: cover;
+    opacity: 0;
+    transition: opacity 120ms ease;
     width: 100%;
+}
+
+.photo-card-image img.is-loaded {
+    opacity: 1;
 }
 
 .photo-card-image .card-badge {
@@ -702,6 +727,40 @@ textarea:focus-visible {
     padding: 12px 20px;
     position: sticky;
     z-index: 4;
+}
+
+.detail-action-spacer {
+    flex: 1;
+}
+
+.confirm-dialog {
+    border: 0;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    max-width: min(430px, calc(100vw - 32px));
+    padding: 22px;
+    width: 100%;
+}
+
+.confirm-dialog::backdrop {
+    background: rgba(24, 29, 25, 0.42);
+}
+
+.confirm-dialog h2 {
+    font-size: 17px;
+    margin: 0 0 8px;
+}
+
+.confirm-dialog p {
+    color: var(--muted);
+    margin: 0;
+}
+
+.confirm-dialog-actions {
+    display: flex;
+    gap: 9px;
+    justify-content: flex-end;
+    margin-top: 20px;
 }
 
 .toast {

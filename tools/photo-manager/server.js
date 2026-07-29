@@ -289,6 +289,65 @@ function updatePhoto(fileName, input) {
     return photos[index];
 }
 
+function deletePhoto(fileName) {
+    const photos = readYaml(photosPath, []).map(normalizePhoto);
+    const services = readYaml(servicesPath, {});
+    const photoIndex = photos.findIndex((photo) => photo.file === fileName);
+    const photo = photoIndex >= 0 ? photos[photoIndex] : null;
+    const fullPath = path.join(fullsDir, fileName);
+    const thumbPath = path.join(thumbsDir, fileName);
+
+    if (!photo && !fs.existsSync(fullPath) && !fs.existsSync(thumbPath))
+        throw new Error('写真が見つかりません。');
+
+    if (photo) {
+        const blockingReferences = collectReferences(photo, services, true)
+            .filter((reference) => reference.kind === 'hero' || reference.kind === 'source');
+        if (blockingReferences.length > 0) {
+            const locations = blockingReferences.map((reference) => reference.label).join('、');
+            throw new Error(`この写真は「${locations}」で直接使用中です。先に参照先の画像を変更してください。`);
+        }
+    }
+
+    const nextPhotos = photo ? photos.filter((item) => item.file !== fileName) : photos;
+    if (photo) {
+        Object.values(services).forEach((service) => {
+            if (Array.isArray(service.photos))
+                service.photos = service.photos.filter((servicePhoto) => servicePhoto.file !== fileName);
+        });
+    }
+
+    const movedFiles = [fullPath, thumbPath]
+        .filter((filePath) => fs.existsSync(filePath))
+        .map((filePath) => ({
+            original: filePath,
+            backup: `${filePath}.photo-desk-delete-${crypto.randomBytes(4).toString('hex')}`
+        }));
+    let deletionCommitted = false;
+
+    try {
+        movedFiles.forEach((file) => fs.renameSync(file.original, file.backup));
+        if (photo) {
+            atomicWriteMany([
+                { path: photosPath, content: stringifyPhotos(nextPhotos) },
+                { path: servicesPath, content: stringifyServices(services) }
+            ]);
+        }
+        deletionCommitted = true;
+        movedFiles.forEach((file) => fs.unlinkSync(file.backup));
+    } catch (error) {
+        if (!deletionCommitted) {
+            movedFiles.slice().reverse().forEach((file) => {
+                if (fs.existsSync(file.backup) && !fs.existsSync(file.original))
+                    fs.renameSync(file.backup, file.original);
+            });
+        }
+        throw error;
+    }
+
+    return { file: fileName, registered: Boolean(photo) };
+}
+
 function sanitizeOutputName(requestedName, originalName) {
     const requestedBase = path.basename(String(requestedName || '')).replace(/\.[^.]+$/, '');
     const safeRequested = requestedBase
@@ -402,8 +461,9 @@ async function importPhoto(source, metadata) {
         await runMagick([
             source.tempPath,
             '-auto-orient',
-            '-resize', '512x512>',
-            '-quality', '84',
+            '-resize', '384x384>',
+            '-strip',
+            '-quality', '78',
             thumbTemp
         ]);
 
@@ -576,6 +636,17 @@ async function handleRequest(req, res) {
             const input = await readJson(req);
             const photo = await serializeMutation(() => updatePhoto(fileName, input));
             sendJson(res, 200, { photo });
+        } catch (error) {
+            sendError(res, error);
+        }
+        return;
+    }
+
+    if (req.method === 'DELETE' && url.pathname.startsWith('/api/photos/')) {
+        const fileName = path.basename(decodeURIComponent(url.pathname.slice('/api/photos/'.length)));
+        try {
+            const result = await serializeMutation(() => deletePhoto(fileName));
+            sendJson(res, 200, result);
         } catch (error) {
             sendError(res, error);
         }

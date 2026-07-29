@@ -193,12 +193,23 @@
                 </section>
 
                 <div class="detail-actions">
+                    <button id="delete-button" class="button button-danger" type="button">削除</button>
+                    <span class="detail-action-spacer"></span>
                     <button id="cancel-button" class="button" type="button">キャンセル</button>
                     <button id="save-button" class="button button-primary" type="submit">保存する</button>
                 </div>
             </form>
         </aside>
     </main>
+
+    <dialog id="delete-dialog" class="confirm-dialog" aria-labelledby="delete-dialog-title">
+        <h2 id="delete-dialog-title">写真を削除しますか？</h2>
+        <p id="delete-dialog-description"></p>
+        <div class="confirm-dialog-actions">
+            <button id="delete-cancel-button" class="button" type="button">キャンセル</button>
+            <button id="delete-confirm-button" class="button button-danger-solid" type="button">削除する</button>
+        </div>
+    </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
     <script src="/app.js"></script>

@@ -47,6 +47,8 @@ function createFixture() {
     fs.copyFileSync(sourcePath, path.join(thumbsDir, 'existing.jpg'));
     fs.copyFileSync(sourcePath, path.join(fullsDir, '_orphan.jpg'));
     fs.copyFileSync(sourcePath, path.join(thumbsDir, '_orphan.jpg'));
+    fs.copyFileSync(sourcePath, path.join(fullsDir, '_delete.jpg'));
+    fs.copyFileSync(sourcePath, path.join(thumbsDir, '_delete.jpg'));
 }
 
 function startServer() {
@@ -95,14 +97,22 @@ async function run() {
     await startServer();
 
     const initial = await requestJson('/api/photos');
-    assert.strictEqual(initial.photos.length, 2);
-    assert.strictEqual(initial.stats.unregistered, 1);
+    assert.strictEqual(initial.photos.length, 3);
+    assert.strictEqual(initial.stats.unregistered, 2);
     assert.ok(initial.photos.some((photo) => photo.file === '_orphan.jpg' && photo.registered === false));
     assert.strictEqual(initial.photos[0].references.filter((ref) => ref.kind === 'service').length, 1);
     assert.strictEqual(initial.photos[0].references.filter((ref) => ref.kind === 'hero').length, 1);
 
     const favicon = await request('/favicon.ico');
     assert.strictEqual(favicon.status, 204);
+
+    const blockedDelete = await request('/api/photos/existing.jpg', { method: 'DELETE' });
+    assert.strictEqual(blockedDelete.status, 400);
+    assert.ok(fs.existsSync(path.join(fullsDir, 'existing.jpg')));
+
+    await requestJson('/api/photos/_delete.jpg', { method: 'DELETE' });
+    assert.ok(!fs.existsSync(path.join(fullsDir, '_delete.jpg')));
+    assert.ok(!fs.existsSync(path.join(thumbsDir, '_delete.jpg')));
 
     await requestJson('/api/photos/existing.jpg', {
         method: 'PUT',
@@ -163,6 +173,14 @@ async function run() {
     const finalServices = YAML.parse(fs.readFileSync(path.join(dataDir, 'services.yml'), 'utf8'));
     assert.strictEqual(finalPhotos.length, 3);
     assert.ok(finalServices.test.photos.some((photo) => photo.file === 'new-photo.jpg'));
+
+    await requestJson('/api/photos/new-photo.jpg', { method: 'DELETE' });
+    const afterDeletePhotos = YAML.parse(fs.readFileSync(path.join(dataDir, 'photos.yml'), 'utf8'));
+    const afterDeleteServices = YAML.parse(fs.readFileSync(path.join(dataDir, 'services.yml'), 'utf8'));
+    assert.strictEqual(afterDeletePhotos.length, 2);
+    assert.ok(!afterDeleteServices.test.photos.some((photo) => photo.file === 'new-photo.jpg'));
+    assert.ok(!fs.existsSync(path.join(fullsDir, 'new-photo.jpg')));
+    assert.ok(!fs.existsSync(path.join(thumbsDir, 'new-photo.jpg')));
 
     console.log('Photo Desk smoke test passed.');
 }
