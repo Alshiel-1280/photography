@@ -1,454 +1,660 @@
-# Photo manifest. Run `npm run photos:sync` after adding images.
+# Photo manifest. Managed by Photo Desk or `npm run photos:sync`.
 
-- file: "P1044114.jpg"
-  title: "陰影を生かした男性ポートレート"
-  category: "profile"
-  area: "大阪"
-  alt: "陰影を生かして撮影した男性のプロフィールポートレート"
+- file: P1044114.jpg
+  title: 一刀
+  category: profile
+  area: 大阪
+  alt: 陰影を生かして撮影した男性のプロフィールポートレート
   order: 1
   featured: true
-
-- file: "Z62_1081.jpg"
-  title: "Z62 1081"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 1081」"
+- file: Z62_1081.jpg
+  title: 紅葉の木漏れ日
+  category: landscape
+  area: ""
+  alt: 紅葉した枝の間から柔らかな光が差し込む秋の風景
   order: 2
   featured: false
-
-- file: "Z62_1087.jpg"
-  title: "Z62 1087"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 1087」"
+- file: Z62_1087.jpg
+  title: 紅葉と三重塔
+  category: landscape
+  area: ""
+  alt: 青空と紅葉を背景に立つ朱色の三重塔
   order: 3
   featured: false
-
-- file: "Z62_1337.jpg"
-  title: "Z62 1337"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 1337」"
+- file: Z62_1337.jpg
+  title: 初日の出
+  category: landscape
+  area: 和歌山
+  alt: 寺院の門に掲げられた日本国旗と参拝者
   order: 4
   featured: false
-
-- file: "Z62_1617-強化-NR.jpg"
-  title: "劇場のコスプレ作品撮影"
-  category: "cosplay"
-  area: "関西"
-  alt: "劇場の座席を生かして撮影したコスプレ作品"
+- file: Z62_1617-強化-NR.jpg
+  title: アルス・アルマル
+  category: cosplay
+  area: 関西
+  alt: 劇場の座席を生かして撮影したコスプレ作品
   order: 5
   featured: false
-
-- file: "Z62_2420.jpg"
-  title: "Z62 2420"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2420」"
+- file: Z62_2420.jpg
+  title: 雪解け
+  category: landscape
+  area: ""
+  alt: 雲間から光が差す海辺に立つ二人のシルエット
   order: 6
   featured: false
-
-- file: "Z62_2559.jpg"
-  title: "落ち着いた男性宣材写真"
-  category: "profile"
-  area: "大阪"
-  alt: "落ち着いた衣装と背景で撮影した男性の宣材写真"
+- file: Z62_2559.jpg
+  title: Check me out!
+  category: profile
+  area: 大阪
+  alt: 落ち着いた衣装と背景で撮影した男性の宣材写真
   order: 7
   featured: false
-
-- file: "Z62_2722.jpg"
-  title: "Z62 2722"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2722」"
+- file: Z62_2722.jpg
+  title: きっと。
+  category: portrait
+  area: ""
+  alt: 青い浴衣を着て振り返る女性の屋外ポートレート
   order: 8
   featured: false
-
-- file: "Z62_2755.jpg"
-  title: "Z62 2755"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2755」"
+- file: Z62_2755.jpg
+  title: 私が。
+  category: portrait
+  area: ""
+  alt: 白い着物と髪飾りを身に着けて微笑む女性のポートレート
   order: 9
   featured: false
-
-- file: "Z62_2818-強化-NR.jpg"
-  title: "赤い衣装のロケーション撮影"
-  category: "cosplay"
-  area: "関西"
-  alt: "建築物と赤い衣装を組み合わせたコスプレ撮影"
+- file: Z62_2818-強化-NR.jpg
+  title: 待つ。
+  category: cosplay
+  area: 関西
+  alt: 建築物と赤い衣装を組み合わせたコスプレ撮影
   order: 10
   featured: false
-
-- file: "Z62_2862.1.jpg"
-  title: "Z62 2862.1"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 2862.1」"
+- file: Z62_2862.1.jpg
+  title: Destiny
+  category: cosplay
+  area: ""
+  alt: 黒い背景と赤い照明の中で横たわるコスプレイヤー
   order: 11
   featured: false
-
-- file: "Z62_3056.jpg"
-  title: "Z62 3056"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3056」"
+- file: Z62_3056.jpg
+  title: 薬屋のひとりごと
+  category: cosplay
+  area: 東京
+  alt: 鮮やかな和装のコスプレをした二人の屋外写真
   order: 12
   featured: false
-
-- file: "Z62_3130.jpg"
-  title: "Z62 3130"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3130」"
+- file: Z62_3130.jpg
+  title: 料理とクラフトビール
+  category: portfolio
+  area: 大阪
+  alt: 木のテーブルに置かれた料理の皿とクラフトビール
   order: 13
   featured: false
-
-- file: "Z62_3136.jpg"
-  title: "Z62 3136"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3136」"
+- file: Z62_3136.jpg
+  title: 成長中
+  category: landscape
+  area: ""
+  alt: 青空の下で花壇に咲く色とりどりのポピー
   order: 14
   featured: false
-
-- file: "Z62_3323.jpg"
-  title: "Z62 3323"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3323」"
+- file: Z62_3323.jpg
+  title: はじまり、
+  category: event
+  area: 大阪
+  alt: 夜空に青く大きく開く花火と連続する打ち上げ花火
   order: 15
   featured: false
-
-- file: "Z62_3399.jpg"
-  title: "Z62 3399"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3399」"
+- file: Z62_3399.jpg
+  title: alone
+  category: event
+  area: 大阪
+  alt: 暗い舞台で赤い衣装の人物に光が当たるステージ写真
   order: 16
   featured: false
-
-- file: "Z62_3444.jpg"
-  title: "Z62 3444"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3444」"
+- file: Z62_3444.jpg
+  title: 園路を歩くアオサギ
+  category: animal
+  area: ""
+  alt: 緑に囲まれた園路を歩く一羽のアオサギ
   order: 17
   featured: false
-
-- file: "Z62_3503.jpg"
-  title: "Z62 3503"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3503」"
+- file: Z62_3503.jpg
+  title: 春風
+  category: animal
+  area: 大阪
+  alt: 青空を背景に止まり木へ並ぶ三羽のインコ
   order: 18
   featured: false
-
-- file: "Z62_3978.jpg"
-  title: "Z62 3978"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 3978」"
+- file: Z62_3978.jpg
+  title: 音、重ねて
+  category: event
+  area: 大阪
+  alt: 花柄の衣装でバイオリンを演奏する人物の後ろ姿
   order: 19
   featured: false
-
-- file: "Z62_4089.jpg"
-  title: "Z62 4089"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4089」"
+- file: Z62_4089.jpg
+  title: これからも、
+  category: event
+  area: 大阪
+  alt: 暗い舞台で赤い衣装の人物が白い布を広げるパフォーマンス
   order: 20
   featured: false
-
-- file: "Z62_4259.jpg"
-  title: "Z62 4259"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4259」"
+- file: Z62_4259.jpg
+  title: Jump UP!
+  category: event
+  area: ""
+  alt: 暗い舞台のスポットライトを浴びて踊る人物
   order: 21
   featured: false
-
-- file: "Z62_4283.jpg"
-  title: "緑の小径のポートレート"
-  category: "portrait"
-  area: "関西"
-  alt: "緑の小径でロケーションの奥行きを生かした女性ポートレート"
+- file: Z62_4283.jpg
+  title: 緑の小径のポートレート
+  category: portrait
+  area: 関西
+  alt: 緑の小径でロケーションの奥行きを生かした女性ポートレート
   order: 22
   featured: false
-
-- file: "Z62_4314.jpg"
-  title: "Z62 4314"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4314」"
+- file: Z62_4314.jpg
+  title: 明け方
+  category: portrait
+  area: ""
+  alt: 緑の草原で植物を手に座る白い衣装の女性
   order: 23
   featured: false
-
-- file: "Z62_4450-2.jpg"
-  title: "Z62 4450 2"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4450 2」"
+- file: Z62_4450-2.jpg
+  title: Take Me Higher
+  category: event
+  area: 大阪
+  alt: 淡いピンクのドレスでバレエをする女性のステージ写真
   order: 24
   featured: false
-
-- file: "Z62_4723.jpg"
-  title: "Z62 4723"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4723」"
+- file: Z62_4723.jpg
+  title: 何もない場所から
+  category: event
+  area: 大阪
+  alt: 暗い舞台で氷を削る上半身裸の男性パフォーマー
   order: 25
   featured: false
-
-- file: "Z62_4993.jpg"
-  title: "Z62 4993"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 4993」"
+- file: Z62_4993.jpg
+  title: 乱反射する眼差し
+  category: cosplay
+  area: 大阪
+  alt: 幾何学的な展示を背景にした銀髪のコスプレポートレート
   order: 26
   featured: false
-
-- file: "Z62_5125_(2).jpg"
-  title: "Z62 5125 (2)"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5125 (2)」"
+- file: Z62_5125_(2).jpg
+  title: 「お先にっ！」
+  category: cosplay
+  area: ""
+  alt: 屋外イベントで緑色の長い髪と黒い衣装を身に着けたコスプレ
   order: 27
   featured: false
-
-- file: "Z62_5212.jpg"
-  title: "Z62 5212"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5212」"
+- file: Z62_5212.jpg
+  title: 私もそれに気づいた！
+  category: event
+  area: ""
+  alt: 青い衣装でステージ上を駆ける女性アイドル
   order: 28
   featured: false
-
-- file: "Z62_5339-2.jpg"
-  title: "Z62 5339 2"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5339 2」"
+- file: Z62_5339-2.jpg
+  title: 起死回生
+  category: event
+  area: ""
+  alt: 暗い舞台で身を寄せ合う黒い衣装の男性グループ
   order: 29
   featured: false
-
-- file: "Z62_5545.jpg"
-  title: "Z62 5545"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5545」"
+- file: Z62_5545.jpg
+  title: 姉
+  category: cosplay
+  area: ""
+  alt: 赤い劇場客席に立つ華やかな衣装のコスプレ
   order: 30
   featured: false
-
-- file: "Z62_5571.jpg"
-  title: "Z62 5571"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5571」"
+- file: Z62_5571.jpg
+  title: Singin'
+  category: cosplay
+  area: ""
+  alt: 紫を基調とした衣装で小道具を持つコスプレポートレート
   order: 31
   featured: false
-
-- file: "Z62_5635.jpg"
-  title: "Z62 5635"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5635」"
+- file: Z62_5635.jpg
+  title: 祝福
+  category: portfolio
+  area: ""
+  alt: 柔らかな光に包まれた白い衣装の布と人物のシルエット
   order: 32
   featured: false
-
-- file: "Z62_5743.jpg"
-  title: "花と小道具のコスプレ作品"
-  category: "cosplay"
-  area: "関西"
-  alt: "花と小道具を使って世界観を表現したコスプレ写真"
+- file: Z62_5743.jpg
+  title: 夢の中で
+  category: cosplay
+  area: 関西
+  alt: 花と小道具を使って世界観を表現したコスプレ写真
   order: 33
   featured: false
-
-- file: "Z62_5769.jpg"
-  title: "Z62 5769"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5769」"
+- file: Z62_5769.jpg
+  title: 赤い制服風衣装のコスプレ
+  category: cosplay
+  area: ""
+  alt: 赤い制服風衣装と長い銀髪のコスプレポートレート
   order: 34
   featured: false
-
-- file: "Z62_5771.jpg"
-  title: "Z62 5771"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5771」"
+- file: Z62_5771.jpg
+  title: 仮面を持つコスプレポートレート
+  category: cosplay
+  area: ""
+  alt: 赤い制服風衣装で白い仮面を持つ銀髪のコスプレ
   order: 35
   featured: false
-
-- file: "Z62_5800.jpg"
-  title: "青い衣装のコスプレ作品"
-  category: "cosplay"
-  area: "関西"
-  alt: "白い背景と青い衣装を生かしたコスプレ作品"
+- file: Z62_5800.jpg
+  title: 衣装チェンジ
+  category: cosplay
+  area: 関西
+  alt: 白い背景と青い衣装を生かしたコスプレ作品
   order: 36
   featured: false
-
-- file: "Z62_5860.jpg"
-  title: "Z62 5860"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5860」"
+- file: Z62_5860.jpg
+  title: If...
+  category: cosplay
+  area: ""
+  alt: 淡い花を挟んで向かい合う二人のコスプレイヤー
   order: 37
   featured: false
-
-- file: "Z62_5918.jpg"
-  title: "Z62 5918"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 5918」"
+- file: Z62_5918.jpg
+  title: Listen me.
+  category: cosplay
+  area: ""
+  alt: 赤い劇場客席を背景にした黒いメイド衣装のコスプレ
   order: 38
   featured: false
-
-- file: "Z62_6094.jpg"
-  title: "親しみやすいプロフィール写真"
-  category: "profile"
-  area: "大阪"
-  alt: "明るい背景で親しみやすい表情を捉えたプロフィール写真"
+- file: Z62_6094.jpg
+  title: 協賛賞
+  category: profile
+  area: 大阪
+  alt: 明るい背景で親しみやすい表情を捉えたプロフィール写真
   order: 39
   featured: false
-
-- file: "Z62_6362.jpg"
-  title: "水辺の自然なポートレート"
-  category: "portrait"
-  area: "関西"
-  alt: "関西の水辺で撮影した青い衣装の自然なポートレート"
+- file: Z62_6362.jpg
+  title: 風になる
+  category: portrait
+  area: 関西
+  alt: 関西の水辺で撮影した青い衣装の自然なポートレート
   order: 40
   featured: false
-
-- file: "Z62_6395.jpg"
-  title: "光を生かした屋外ポートレート"
-  category: "portrait"
-  area: "関西"
-  alt: "水辺の光を生かした明るい屋外ポートレート"
+- file: Z62_6395.jpg
+  title: CYAN
+  category: portrait
+  area: 関西
+  alt: 水辺の光を生かした明るい屋外ポートレート
   order: 41
   featured: true
-
-- file: "Z62_6449.jpg"
-  title: "都市の水辺のポートレート"
-  category: "portrait"
-  area: "関西"
-  alt: "都市の水辺を背景にした女性のロケーションポートレート"
+- file: Z62_6449.jpg
+  title: ノン　フィクション
+  category: portrait
+  area: 関西
+  alt: 都市の水辺を背景にした女性のロケーションポートレート
   order: 42
   featured: false
-
-- file: "Z62_6519.jpg"
-  title: "柔らかな自然光のポートレート"
-  category: "portrait"
-  area: "関西"
-  alt: "柔らかな自然光で撮影した女性のポートレート"
+- file: Z62_6519.jpg
+  title: GIRLy
+  category: portrait
+  area: 関西
+  alt: 柔らかな自然光で撮影した女性のポートレート
   order: 43
   featured: false
-
-- file: "Z62_6556.jpg"
-  title: "落ち着いた表情のポートレート"
-  category: "portrait"
-  area: "関西"
-  alt: "落ち着いた表情を引き出した女性のポートレート"
+- file: Z62_6556.jpg
+  title: LAdY
+  category: portrait
+  area: 関西
+  alt: 落ち着いた表情を引き出した女性のポートレート
   order: 44
   featured: false
-
-- file: "Z62_6708.jpg"
-  title: "男性のビジネスプロフィール"
-  category: "profile"
-  area: "大阪"
-  alt: "スーツ姿の男性を明るい背景で撮影したビジネスプロフィール"
+- file: Z62_6708.jpg
+  title: with
+  category: profile
+  area: 大阪
+  alt: スーツ姿の男性を明るい背景で撮影したビジネスプロフィール
   order: 45
   featured: false
-
-- file: "Z62_6745.jpg"
-  title: "スーツのビジネスプロフィール"
-  category: "profile"
-  area: "大阪"
-  alt: "スーツの着こなしが伝わるビジネス用プロフィール写真"
+- file: Z62_6745.jpg
+  title: 右腕
+  category: profile
+  area: 大阪
+  alt: スーツの着こなしが伝わるビジネス用プロフィール写真
   order: 46
   featured: false
-
-- file: "Z62_6764.jpg"
-  title: "緑のロケーションポートレート"
-  category: "portrait"
-  area: "関西"
-  alt: "緑のロケーションで自然な表情を捉えたポートレート"
+- file: Z62_6764.jpg
+  title: ひんやりと
+  category: portrait
+  area: 関西
+  alt: 緑のロケーションで自然な表情を捉えたポートレート
   order: 47
   featured: false
-
-- file: "Z62_6772.jpg"
-  title: "Z62 6772"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6772」"
+- file: Z62_6772.jpg
+  title: 川遊び
+  category: event
+  area: ""
+  alt: 水しぶきの中で赤いスポーツウェアを着た男性
   order: 48
   featured: false
-
-- file: "Z62_6869.jpg"
-  title: "Z62 6869"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6869」"
+- file: Z62_6869.jpg
+  title: Swim
+  category: event
+  area: ""
+  alt: 川の中で赤いスポーツウェアを着て笑う人物
   order: 49
   featured: false
-
-- file: "Z62_6899.jpg"
-  title: "Z62 6899"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6899」"
+- file: Z62_6899.jpg
+  title: こんがり
+  category: event
+  area: ""
+  alt: 炭火の網の上でトングを使って肉を焼く様子
   order: 50
   featured: false
-
-- file: "Z62_6975.jpg"
-  title: "Z62 6975"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 6975」"
+- file: Z62_6975.jpg
+  title: ミス関大準グランプリ
+  category: portrait
+  area: ""
+  alt: 小さなクラウンと白い衣装を身に着けた女性のポートレート
   order: 51
   featured: false
-
-- file: "Z62_7026.jpg"
-  title: "Z62 7026"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 7026」"
+- file: Z62_7026.jpg
+  title: ミスター関大グランプリ
+  category: profile
+  area: ""
+  alt: ブラウンのスーツを着た男性のスタジオプロフィール写真
   order: 52
   featured: false
-
-- file: "Z62_7089.jpg"
-  title: "チームプロフィール"
-  category: "profile"
-  area: "大阪"
-  alt: "チームの雰囲気が伝わる複数人のプロフィール写真"
+- file: Z62_7089.jpg
+  title: 人とby株式会社withsupport様
+  category: profile
+  area: 大阪
+  alt: チームの雰囲気が伝わる複数人のプロフィール写真
   order: 53
   featured: false
-
-- file: "Z62_7232.jpg"
-  title: "Z62 7232"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 7232」"
+- file: Z62_7232.jpg
+  title: 「夜空を見上げてみてください」
+  category: event
+  area: ""
+  alt: 夜にライトアップされた大規模イベント会場の全景
   order: 54
   featured: false
-
-- file: "Z62_7269.jpg"
-  title: "Z62 7269"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 7269」"
+- file: Z62_7269.jpg
+  title: おしまい。
+  category: event
+  area: ""
+  alt: 夜の会場に展示された赤いキャラクターモニュメント
   order: 55
   featured: false
-
-- file: "Z62_8555.jpg"
-  title: "Z62 8555"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8555」"
+- file: Z62_8555.jpg
+  title: 「のだ」
+  category: cosplay
+  area: ""
+  alt: 緑の衣装とウィッグを身に着けた屋外のコスプレポートレート
   order: 56
   featured: false
-
-- file: "Z62_8580.jpg"
-  title: "Z62 8580"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8580」"
+- file: Z62_8580.jpg
+  title: 早乙女あこ＠acosta!ATC
+  category: cosplay
+  area: 大阪
+  alt: 早乙女あこのコスプレ。ATC駐車場にて
   order: 57
   featured: false
-
-- file: "Z62_8667.jpg"
-  title: "イベント会場のコスプレ撮影"
-  category: "cosplay"
-  area: "関西"
-  alt: "イベント会場でキャラクターの表情を捉えたコスプレ写真"
+- file: Z62_8667.jpg
+  title: 十六夜咲夜＠コミケ107
+  category: cosplay
+  area: ""
+  alt: 銀髪とメイド服を身に着けた人物の屋外コスプレポートレート
   order: 58
   featured: false
-
-- file: "Z62_8676.jpg"
-  title: "Z62 8676"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8676」"
+- file: Z62_8676.jpg
+  title: 赤見かるび＠コミケ107
+  category: cosplay
+  area: ""
+  alt: 赤見かるびのコスプレ。ビッグサイト屋上にて
   order: 59
   featured: false
-
-- file: "Z62_8704.jpg"
-  title: "Z62 8704"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8704」"
+- file: Z62_8704.jpg
+  title: 青い制服風衣装のコスプレ
+  category: cosplay
+  area: ""
+  alt: 青い制服風衣装で黄色い小道具を構えるコスプレイヤー
   order: 60
   featured: false
-
-- file: "Z62_8731.jpg"
-  title: "逆光のコスプレポートレート"
-  category: "cosplay"
-  area: "関西"
-  alt: "逆光と衣装の色を生かしたコスプレポートレート"
+- file: Z62_8731.jpg
+  title: 外に→
+  category: cosplay
+  area: 関西
+  alt: 逆光と衣装の色を生かしたコスプレポートレート
   order: 61
   featured: true
-
-- file: "Z62_8749_(2).jpg"
-  title: "Z62 8749 (2)"
-  category: "portfolio"
-  alt: "Shioji Ryosukeが撮影したポートフォリオ作品「Z62 8749 (2)」"
+- file: Z62_8749_(2).jpg
+  title: さあ
+  category: cosplay
+  area: ""
+  alt: ピンクの長い髪と赤い衣装のコスプレポートレート
   order: 62
+  featured: false
+- file: 1050049-20260810065444-e952.jpg
+  title: 浅草観光
+  category: landscape
+  area: 東京
+  alt: 浅草観光
+  order: 63
+  featured: false
+- file: 1050627-20260810065505-a719.jpg
+  title: クラシックカー
+  category: portfolio
+  area: 大阪
+  alt: クラシックカー
+  order: 64
+  featured: false
+- file: Z6S8594-20260810065536-d00b.jpg
+  title: 草むらにて
+  category: portrait
+  area: 大阪
+  alt: 草花に囲まれた女性ポートレート
+  order: 65
+  featured: false
+- file: Z6S8633-20260810065603-c1d1.jpg
+  title: 桃と少女
+  category: portrait
+  area: 大阪
+  alt: 草原に座る女性ポートレート
+  order: 66
+  featured: false
+- file: D81_0916-20260810072839-3f11.jpg
+  title: 阪大バンドリ研様
+  category: event
+  area: ""
+  alt: ステージ上の出演者を大勢の観客が囲む集合写真
+  order: 67
+  featured: false
+- file: Z62_8798-20260810072842-6af8.jpg
+  title: 待ち焦がれ
+  category: cosplay
+  area: ""
+  alt: 紫色のウィッグと衣装で花束を持つコスプレイヤーの上半身
+  order: 68
+  featured: false
+- file: Z62_8780-2-20260810072845-04e9.jpg
+  title: 君が望むなら
+  category: cosplay
+  area: ""
+  alt: 白いウィッグと白黒の衣装で青い花に囲まれたコスプレイヤー
+  order: 69
+  featured: false
+- file: Z62_8652-20260810072847-5c39.jpg
+  title: クモ
+  category: portrait
+  area: ""
+  alt: 眼鏡と黒い衣装で椅子に座る人物のスタジオポートレート
+  order: 70
+  featured: false
+- file: Z62_8598-20260810072849-342a.jpg
+  title: 私が
+  category: cosplay
+  area: ""
+  alt: 金髪のウィッグと白い衣装で剣を構えるコスプレイヤー
+  order: 71
+  featured: false
+- file: D81_8413-20260810072852-c9ff.jpg
+  title: TroubleMaker
+  category: cosplay
+  area: ""
+  alt: ピンクのウィッグと制服風衣装で花びらに囲まれたコスプレイヤー
+  order: 72
+  featured: false
+- file: Z62_8241_-2-20260810072855-d587.jpg
+  title: 神秘
+  category: portrait
+  area: ""
+  alt: 白いドレスを着て赤い花のそばの芝生に横たわる女性
+  order: 73
+  featured: false
+- file: Z62_8228-20260810072858-3e5d.jpg
+  title: 春嵐
+  category: portrait
+  area: ""
+  alt: 白い衣装の二人が屋外で花びらを投げて笑う様子
+  order: 74
+  featured: false
+- file: D81_8256-20260810072900-e81a.jpg
+  title: 飛んでいくのは？
+  category: portrait
+  area: ""
+  alt: 白いドレスの女性が手のひらから花びらを吹く屋外ポートレート
+  order: 75
+  featured: false
+- file: D81_8107-20260810072903-b461.jpg
+  title: 位置について
+  category: event
+  area: ""
+  alt: 白いドレスを着た女性たちが緑の中で寄り添う集合写真
+  order: 76
+  featured: false
+- file: D81_8094-20260810072908-0dd8.jpg
+  title: ハーブを添えたカクテル
+  category: portfolio
+  area: ""
+  alt: ハーブと氷が入った透明なカクテルグラス
+  order: 78
+  featured: false
+- file: D81_8091-20260810072911-99f6.jpg
+  title: 友人
+  category: event
+  area: ""
+  alt: 店内のカウンターで飲み物を作るバーテンダー
+  order: 79
+  featured: false
+- file: D81_8092-20260810072914-9a5a.jpg
+  title: カウンターに置かれたビール
+  category: portfolio
+  area: ""
+  alt: 店内のカウンターに置かれた泡のあるビールグラス
+  order: 80
+  featured: false
+- file: Z62_7965-20260810072916-622c.jpg
+  title: Suncatcher
+  category: cosplay
+  area: ""
+  alt: 鮮やかなピンクと紫のウィッグでポーズを取る二人のコスプレイヤー
+  order: 81
+  featured: false
+- file: Z62_7986_-2-20260810072919-79da.jpg
+  title: 真夏のギャル
+  category: cosplay
+  area: ""
+  alt: カラフルな衣装でスマートフォンを向けるピンク髪のコスプレイヤー
+  order: 82
+  featured: false
+- file: D81_7628-20260810072927-3e08.jpg
+  title: 蒼すぎた日々
+  category: cosplay
+  area: ""
+  alt: 白いウィッグと黒いサングラスを身に着けた屋外のコスプレポートレート
+  order: 85
+  featured: false
+- file: Z62_7906-20260810072931-9f2c.jpg
+  title: 在りし日
+  category: cosplay
+  area: ""
+  alt: 黒い制服風衣装で並ぶ四人のコスプレイヤー
+  order: 86
+  featured: false
+- file: D81_7589-20260810072937-0cff.jpg
+  title: このメンバーで
+  category: profile
+  area: ""
+  alt: スーツ姿の男性たちが腕を組んで並ぶグループプロフィール
+  order: 88
+  featured: false
+- file: Z62_7775-20260810072940-07d9.jpg
+  title: トップに
+  category: profile
+  area: ""
+  alt: スーツ姿で人差し指を立てて微笑む男性のプロフィール写真
+  order: 89
+  featured: false
+- file: Z62_7807-20260810072943-88c3.jpg
+  title: 2人目
+  category: profile
+  area: ""
+  alt: スーツ姿で腕を組む男性のプロフィール写真
+  order: 90
+  featured: false
+- file: Z62_7889-20260810072946-3db0.jpg
+  title: 上昇↑by株式会社最強様
+  category: profile
+  area: ""
+  alt: スーツ姿の男性たちが笑顔で集まるグループプロフィール
+  order: 91
+  featured: false
+- file: D81_0983-20260810072948-6502.jpg
+  title: あなたを、
+  category: cosplay
+  area: ""
+  alt: 青と赤の角飾りを着けて花畑に立つコスプレイヤーの横顔
+  order: 92
+  featured: false
+- file: D81_0996-20260810072952-f33c.jpg
+  title: 花畑を背景にしたコスプレ
+  category: cosplay
+  area: ""
+  alt: 青と赤の角飾りを着けて花畑で振り返るコスプレイヤー
+  order: 93
+  featured: false
+- file: D81_1070-20260810072955-a978.jpg
+  title: Still in...
+  category: cosplay
+  area: ""
+  alt: 青い花畑を背景に角飾りと白い衣装を身に着けたコスプレイヤー
+  order: 94
+  featured: false
+- file: D81_0758-20260810072958-4cfc.jpg
+  title: 大黒柱
+  category: event
+  area: ""
+  alt: ステージでギターを演奏する男性ミュージシャン
+  order: 95
+  featured: false
+- file: D81_0835-20260810073001-f0d5.jpg
+  title: Rock 'n' Roll
+  category: event
+  area: ""
+  alt: 赤いステージ照明の下でマイクを持って歌う男性
+  order: 96
+  featured: false
+- file: Z62_5206-20260810073004-01a3.jpg
+  title: 準備万端
+  category: event
+  area: ""
+  alt: 青い照明とペンライトに囲まれたライブ出演者
+  order: 97
+  featured: false
+- file: D81_0617-20260810073006-022b.jpg
+  title: お手を拝借
+  category: event
+  area: ""
+  alt: 白い制服風衣装でステージに立つ女性パフォーマー
+  order: 98
   featured: false
