@@ -16,17 +16,25 @@
                 <p>Portfolio image manager</p>
             </div>
         </div>
+        <nav class="mode-switch" aria-label="管理対象">
+            <button id="photos-mode-button" class="mode-button is-active" type="button" aria-pressed="true">写真</button>
+            <button id="articles-mode-button" class="mode-button" type="button" aria-pressed="false">記事</button>
+        </nav>
         <div class="header-actions">
             <span id="save-state" class="save-state" aria-live="polite"></span>
             <button id="add-button" class="button button-primary" type="button">
                 <span aria-hidden="true">＋</span>
                 写真を追加
             </button>
+            <button id="new-article-button" class="button button-primary" type="button" hidden>
+                <span aria-hidden="true">＋</span>
+                記事を作成
+            </button>
             <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/tiff,.heic,.tif,.tiff" multiple hidden>
         </div>
     </header>
 
-    <main class="workspace">
+    <main id="photo-workspace" class="workspace">
         <aside class="filters" aria-label="写真の絞り込み">
             <div class="stats" aria-label="登録状況">
                 <div>
@@ -39,7 +47,7 @@
                 </div>
                 <div>
                     <strong id="referenced-count">0</strong>
-                    <span>依頼ページ</span>
+                    <span>依頼・記事</span>
                 </div>
             </div>
 
@@ -66,6 +74,7 @@
                 <option value="">すべて</option>
                 <option value="service">依頼ページで使用</option>
                 <option value="hero">メイン画像で使用</option>
+                <option value="article">記事で使用</option>
                 <option value="unreferenced">依頼ページ未使用</option>
                 <option value="orphan">フォルダ内・未登録</option>
                 <option value="pending">追加待ち</option>
@@ -202,12 +211,144 @@
         </aside>
     </main>
 
+    <main id="article-workspace" class="article-workspace" hidden>
+        <aside class="article-library" aria-label="記事一覧">
+            <div class="article-library-heading">
+                <div>
+                    <h2>記事</h2>
+                    <p id="article-count">読み込み中</p>
+                </div>
+            </div>
+            <div class="search-field article-search">
+                <span aria-hidden="true">⌕</span>
+                <input id="article-search-input" type="search" placeholder="タイトル、カテゴリ、本文">
+            </div>
+            <div id="article-list" class="article-admin-list"></div>
+        </aside>
+
+        <section class="article-editor" aria-label="記事の編集">
+            <div id="article-empty" class="article-editor-empty">
+                <strong>記事を選択してください</strong>
+                <p>記事の作成、編集、掲載写真の選択ができます。</p>
+            </div>
+
+            <form id="article-form" class="article-form" hidden>
+                <header class="article-form-header">
+                    <div>
+                        <p id="article-file" class="file-name"></p>
+                        <h2 id="article-form-heading">記事を編集</h2>
+                    </div>
+                    <span id="article-status-badge" class="article-status-badge">下書き</span>
+                </header>
+
+                <div class="article-form-grid">
+                    <div class="article-form-main">
+                        <div class="form-field">
+                            <label for="article-title">タイトル</label>
+                            <input id="article-title" type="text" maxlength="100" required>
+                        </div>
+                        <div class="form-field">
+                            <div class="label-row">
+                                <label for="article-description">概要</label>
+                                <span id="article-description-count">0 / 180</span>
+                            </div>
+                            <textarea id="article-description" rows="3" maxlength="180" required></textarea>
+                        </div>
+                        <div class="form-field article-body-field">
+                            <label for="article-body">本文（Markdown）</label>
+                            <textarea id="article-body" rows="22" placeholder="## 見出し&#10;&#10;本文を入力します。" required></textarea>
+                        </div>
+                    </div>
+
+                    <aside class="article-form-side">
+                        <div class="form-field">
+                            <label for="article-slug">URLスラッグ</label>
+                            <div class="slug-input">
+                                <span>/articles/</span>
+                                <input id="article-slug" type="text" maxlength="80" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="portrait-guide" required>
+                                <span>/</span>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="article-category">カテゴリ</label>
+                            <input id="article-category" type="text" maxlength="40" placeholder="撮影準備" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="article-date">公開日</label>
+                                <input id="article-date" type="date" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="article-updated">更新日</label>
+                                <input id="article-updated" type="date" required>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="article-service">対応する撮影依頼</label>
+                            <select id="article-service">
+                                <option value="">撮影依頼一覧</option>
+                            </select>
+                        </div>
+                        <label class="publish-toggle">
+                            <input id="article-published" type="checkbox">
+                            <span>
+                                <strong>記事を公開する</strong>
+                                <small>オフの場合は下書きとして保存</small>
+                            </span>
+                        </label>
+
+                        <section class="article-image-section">
+                            <div class="section-heading">
+                                <h3>メイン写真</h3>
+                                <span>必須</span>
+                            </div>
+                            <select id="article-hero" required></select>
+                            <div id="article-hero-preview" class="article-hero-preview">
+                                <span>写真を選択してください</span>
+                            </div>
+                            <label class="compact-label" for="article-hero-alt">メイン写真のalt</label>
+                            <textarea id="article-hero-alt" rows="2" required></textarea>
+                        </section>
+
+                        <section class="article-image-section">
+                            <div class="section-heading">
+                                <h3>関連する作例</h3>
+                                <span id="article-photo-count">0枚</span>
+                            </div>
+                            <div class="search-field article-photo-search">
+                                <span aria-hidden="true">⌕</span>
+                                <input id="article-photo-search-input" type="search" placeholder="写真を検索">
+                            </div>
+                            <div id="article-photo-options" class="article-photo-options"></div>
+                        </section>
+                    </aside>
+                </div>
+
+                <div class="article-form-actions">
+                    <button id="delete-article-button" class="button button-danger" type="button">削除</button>
+                    <span class="detail-action-spacer"></span>
+                    <button id="cancel-article-button" class="button" type="button">キャンセル</button>
+                    <button id="save-article-button" class="button button-primary" type="submit">保存する</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
     <dialog id="delete-dialog" class="confirm-dialog" aria-labelledby="delete-dialog-title">
         <h2 id="delete-dialog-title">写真を削除しますか？</h2>
         <p id="delete-dialog-description"></p>
         <div class="confirm-dialog-actions">
             <button id="delete-cancel-button" class="button" type="button">キャンセル</button>
             <button id="delete-confirm-button" class="button button-danger-solid" type="button">削除する</button>
+        </div>
+    </dialog>
+
+    <dialog id="delete-article-dialog" class="confirm-dialog" aria-labelledby="delete-article-dialog-title">
+        <h2 id="delete-article-dialog-title">記事を削除しますか？</h2>
+        <p id="delete-article-dialog-description"></p>
+        <div class="confirm-dialog-actions">
+            <button id="delete-article-cancel-button" class="button" type="button">キャンセル</button>
+            <button id="delete-article-confirm-button" class="button button-danger-solid" type="button">削除する</button>
         </div>
     </dialog>
 

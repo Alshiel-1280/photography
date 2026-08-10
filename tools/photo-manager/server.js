@@ -12,6 +12,7 @@ const root = path.resolve(process.env.PHOTO_MANAGER_ROOT || path.join(__dirname,
 const publicDir = path.join(__dirname, 'public');
 const photosPath = path.join(root, '_data', 'photos.yml');
 const servicesPath = path.join(root, '_data', 'services.yml');
+const articlesDir = path.join(root, '_articles');
 const fullsDir = path.join(root, 'images', 'fulls');
 const thumbsDir = path.join(root, 'images', 'thumbs');
 const host = '127.0.0.1';
@@ -116,7 +117,7 @@ function readReferenceSources() {
     });
 }
 
-function collectReferences(photo, services, registered = true, sourceFiles = readReferenceSources()) {
+function collectReferences(photo, services, registered = true, sourceFiles = readReferenceSources(), articles = readArticles()) {
     const references = registered
         ? [
             {
@@ -163,6 +164,29 @@ function collectReferences(photo, services, registered = true, sourceFiles = rea
         });
     });
 
+    articles.forEach((article) => {
+        if (article.heroFile === photo.file) {
+            references.push({
+                kind: 'articleHero',
+                label: `記事「${article.title}」のメイン写真`,
+                source: `_articles/${article.slug}.md`,
+                alt: article.heroAlt,
+                editable: false
+            });
+        }
+        article.photos.forEach((articlePhoto) => {
+            if (articlePhoto.file !== photo.file)
+                return;
+            references.push({
+                kind: 'article',
+                label: `記事「${article.title}」の関連作例`,
+                source: `_articles/${article.slug}.md`,
+                alt: articlePhoto.alt,
+                editable: false
+            });
+        });
+    });
+
     sourceFiles.forEach(({ relativePath, source }) => {
         if (!source.includes(photo.file))
             return;
@@ -178,10 +202,173 @@ function collectReferences(photo, services, registered = true, sourceFiles = rea
     return references;
 }
 
+function normalizeDateValue(value) {
+    if (value instanceof Date && !Number.isNaN(value.valueOf()))
+        return value.toISOString().slice(0, 10);
+    return String(value || '').slice(0, 10);
+}
+
+function parseArticleFile(filePath) {
+    const source = fs.readFileSync(filePath, 'utf8');
+    const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+    if (!match)
+        throw new Error(`${path.basename(filePath)}のfront matterを読み取れません。`);
+    const metadata = YAML.parse(match[1]) || {};
+    const slug = path.basename(filePath, path.extname(filePath));
+    const heroFile = path.basename(String(metadata.hero_image || ''));
+
+    return {
+        slug,
+        title: String(metadata.title || ''),
+        description: String(metadata.description || ''),
+        category: String(metadata.category || '撮影ガイド'),
+        date: normalizeDateValue(metadata.date),
+        updated: normalizeDateValue(metadata.updated || metadata.date),
+        heroFile,
+        heroAlt: String(metadata.hero_alt || ''),
+        serviceKey: String(metadata.service_key || ''),
+        published: metadata.published !== false,
+        photos: Array.isArray(metadata.photos)
+            ? metadata.photos.map((photo) => ({
+                file: path.basename(String(photo.file || '')),
+                alt: String(photo.alt || '')
+            })).filter((photo) => photo.file)
+            : [],
+        body: match[2].replace(/\s+$/, '')
+    };
+}
+
+function readArticles() {
+    if (!fs.existsSync(articlesDir))
+        return [];
+    return fs.readdirSync(articlesDir)
+        .filter((file) => file.endsWith('.md'))
+        .sort()
+        .map((file) => parseArticleFile(path.join(articlesDir, file)))
+        .sort((left, right) => right.date.localeCompare(left.date));
+}
+
+function getArticleCatalog() {
+    const services = readYaml(servicesPath, {});
+    return {
+        articles: readArticles(),
+        services: Object.entries(services).map(([key, service]) => ({ key, name: service.name }))
+    };
+}
+
+function validateArticle(input, existingSlug = '') {
+    const slug = String(input.slug || existingSlug).trim();
+    const title = String(input.title || '').trim();
+    const description = String(input.description || '').trim();
+    const category = String(input.category || '撮影ガイド').trim();
+    const date = normalizeDateValue(input.date);
+    const updated = normalizeDateValue(input.updated || input.date);
+    const heroFile = path.basename(String(input.heroFile || ''));
+    const heroAlt = String(input.heroAlt || '').trim();
+    const serviceKey = String(input.serviceKey || '').trim();
+    const body = String(input.body || '').trim();
+    const published = Boolean(input.published);
+    const services = readYaml(servicesPath, {});
+    const knownPhotos = new Map(readYaml(photosPath, []).map((photo) => [photo.file, photo]));
+
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 80)
+        throw new Error('スラッグは80文字以内の半角英小文字・数字・ハイフンで入力してください。');
+    if (existingSlug && slug !== existingSlug)
+        throw new Error('公開URLを保つため、保存後のスラッグは変更できません。');
+    if (!title || title.length > 100)
+        throw new Error('タイトルを1〜100文字で入力してください。');
+    if (!description || description.length > 180)
+        throw new Error('概要を1〜180文字で入力してください。');
+    if (!category || category.length > 40)
+        throw new Error('カテゴリを1〜40文字で入力してください。');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(`${date}T00:00:00Z`)))
+        throw new Error('公開日を正しく入力してください。');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(updated) || Number.isNaN(Date.parse(`${updated}T00:00:00Z`)))
+        throw new Error('更新日を正しく入力してください。');
+    if (!heroFile || !knownPhotos.has(heroFile) || !fs.existsSync(path.join(fullsDir, heroFile)))
+        throw new Error('登録済みのメイン写真を選択してください。');
+    if (!heroAlt)
+        throw new Error('メイン写真のaltを入力してください。');
+    if (serviceKey && !services[serviceKey])
+        throw new Error('撮影依頼のリンク先が不正です。');
+    if (published && body.length < 100)
+        throw new Error('公開記事の本文は100文字以上入力してください。');
+
+    const selected = Array.isArray(input.photos) ? input.photos : [];
+    const seen = new Set();
+    const photos = selected.flatMap((photo) => {
+        const file = path.basename(String(photo.file || ''));
+        if (!file || seen.has(file) || !knownPhotos.has(file) || !fs.existsSync(path.join(fullsDir, file)))
+            return [];
+        seen.add(file);
+        return [{
+            file,
+            alt: String(photo.alt || knownPhotos.get(file).alt || '').trim()
+        }];
+    });
+    if (photos.some((photo) => !photo.alt))
+        throw new Error('関連作例のaltを入力してください。');
+
+    return {
+        slug,
+        title,
+        description,
+        category,
+        date,
+        updated,
+        heroFile,
+        heroAlt,
+        serviceKey,
+        published,
+        photos,
+        body
+    };
+}
+
+function stringifyArticle(article) {
+    const metadata = {
+        title: article.title,
+        description: article.description,
+        category: article.category,
+        date: article.date,
+        updated: article.updated,
+        hero_image: `/images/fulls/${article.heroFile}`,
+        hero_alt: article.heroAlt,
+        service_key: article.serviceKey || undefined,
+        published: article.published,
+        photos: article.photos
+    };
+    Object.keys(metadata).forEach((key) => metadata[key] === undefined && delete metadata[key]);
+    return `---\n${YAML.stringify(metadata, { lineWidth: 0 })}---\n\n${article.body}\n`;
+}
+
+function saveArticle(input, existingSlug = '') {
+    const article = validateArticle(input, existingSlug);
+    fs.mkdirSync(articlesDir, { recursive: true });
+    const filePath = path.join(articlesDir, `${article.slug}.md`);
+    if (!existingSlug && fs.existsSync(filePath))
+        throw new Error('同じスラッグの記事がすでにあります。');
+    if (existingSlug && !fs.existsSync(filePath))
+        throw new Error('記事が見つかりません。');
+    atomicWriteMany([{ path: filePath, content: stringifyArticle(article) }]);
+    return parseArticleFile(filePath);
+}
+
+function deleteArticle(slug) {
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))
+        throw new Error('記事スラッグが不正です。');
+    const filePath = path.join(articlesDir, `${slug}.md`);
+    if (!fs.existsSync(filePath))
+        throw new Error('記事が見つかりません。');
+    fs.unlinkSync(filePath);
+    return { slug };
+}
+
 function getCatalog() {
     const photos = readYaml(photosPath, []).map(normalizePhoto);
     const services = readYaml(servicesPath, {});
     const sourceFiles = readReferenceSources();
+    const articles = readArticles();
     const registeredFiles = new Set(photos.map((photo) => photo.file));
     const fullFiles = fs.readdirSync(fullsDir)
         .filter((file) => allowedSourceExtensions.has(path.extname(file).toLowerCase()))
@@ -214,14 +401,14 @@ function getCatalog() {
             thumbUrl: fs.existsSync(path.join(thumbsDir, photo.file))
                 ? `/media/thumbs/${encodeURIComponent(photo.file)}`
                 : `/media/fulls/${encodeURIComponent(photo.file)}`,
-            references: collectReferences(photo, services, registered, sourceFiles)
+            references: collectReferences(photo, services, registered, sourceFiles, articles)
         })),
         services: serviceOptions,
         categories: Array.from(allowedCategories),
         stats: {
             total: catalogPhotos.length,
             described: photos.filter((photo) => !photo.alt.includes('ポートフォリオ作品「')).length,
-            referenced: photos.filter((photo) => collectReferences(photo, services, true, sourceFiles).some((ref) => ref.kind === 'service' || ref.kind === 'hero')).length,
+            referenced: photos.filter((photo) => collectReferences(photo, services, true, sourceFiles, articles).some((ref) => ['service', 'hero', 'article', 'articleHero'].includes(ref.kind))).length,
             unregistered: orphans.length
         }
     };
@@ -310,7 +497,7 @@ function deletePhoto(fileName) {
 
     if (photo) {
         const blockingReferences = collectReferences(photo, services, true)
-            .filter((reference) => reference.kind === 'hero' || reference.kind === 'source');
+            .filter((reference) => ['hero', 'source', 'article', 'articleHero'].includes(reference.kind));
         if (blockingReferences.length > 0) {
             const locations = blockingReferences.map((reference) => reference.label).join('、');
             throw new Error(`この写真は「${locations}」で直接使用中です。先に参照先の画像を変更してください。`);
@@ -672,6 +859,45 @@ async function handleRequest(req, res) {
 
     if (req.method === 'GET' && url.pathname === '/api/photos') {
         sendJson(res, 200, getCatalog());
+        return;
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/articles') {
+        sendJson(res, 200, getArticleCatalog());
+        return;
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/articles') {
+        try {
+            const input = await readJson(req);
+            const article = await serializeMutation(() => saveArticle(input));
+            sendJson(res, 201, { article });
+        } catch (error) {
+            sendError(res, error);
+        }
+        return;
+    }
+
+    if (req.method === 'PUT' && url.pathname.startsWith('/api/articles/')) {
+        const slug = decodeURIComponent(url.pathname.slice('/api/articles/'.length));
+        try {
+            const input = await readJson(req);
+            const article = await serializeMutation(() => saveArticle(input, slug));
+            sendJson(res, 200, { article });
+        } catch (error) {
+            sendError(res, error);
+        }
+        return;
+    }
+
+    if (req.method === 'DELETE' && url.pathname.startsWith('/api/articles/')) {
+        const slug = decodeURIComponent(url.pathname.slice('/api/articles/'.length));
+        try {
+            const result = await serializeMutation(() => deleteArticle(slug));
+            sendJson(res, 200, result);
+        } catch (error) {
+            sendError(res, error);
+        }
         return;
     }
 

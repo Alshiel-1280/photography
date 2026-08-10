@@ -59,6 +59,7 @@ Open `http://127.0.0.1:4173`. Photo Desk provides:
 - A list of portfolio, request-page, hero-image, sitemap, and OGP references.
 - Per-request-page alt editing.
 - Local image import with automatic JPEG naming and generation of `images/fulls` and `images/thumbs`.
+- Article creation and editing with Markdown, publish/draft status, SEO summary, dates, service links, and photo selection.
 
 The manager binds only to `127.0.0.1` and is not intended to be deployed. Keep the terminal window open while using it, and press `Ctrl+C` to stop it.
 
@@ -102,6 +103,19 @@ photos:
 All request-page copy is managed in `_data/services.yml`. Update `description`, `lead`, `details`, `process`, `faqs`, and `photos` for each service. Do not add city-name variants with otherwise identical copy.
 
 General site information, social links, Google Analytics, and the form destination are managed in `_config.yml`.
+
+#### Add or edit an article
+
+Open Photo Desk and select the `記事` tab. Each article supports:
+
+- A stable ASCII URL slug under `/articles/<slug>/`.
+- Title, search-result description, category, published date, and updated date.
+- Published or draft status. Drafts are saved but excluded from the generated site.
+- A hero photo and alt text selected from registered portfolio photos.
+- Multiple related portfolio photos and a link to the relevant request page.
+- Markdown body text.
+
+Article source files are stored in `_articles`. Published articles appear automatically on `/articles/`, the home page, request page, and `sitemap.xml`. Do not change an existing slug after publishing because it is the article's public URL.
 
 After any change, run:
 

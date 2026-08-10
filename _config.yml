@@ -9,6 +9,20 @@ google_analytics: "G-ZTXFW04G7P"
 contact_form_action: "https://script.google.com/macros/s/AKfycbxvf6vHyDM_F9b68AAbRyuObCXzBoSi1G4VNcJH4Rf6MZMp6IgFG2g7shcRGPh1Hec/exec?source=form"
 timezone: "Asia/Tokyo"
 
+collections:
+  articles:
+    output: true
+    permalink: /articles/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: articles
+    values:
+      layout: article
+      body_class: article-page
+      og_type: article
+
 # UI configs
 title: "Shioji Ryosuke Photography | 関西のポートレート・コスプレ撮影"
 subtitle: "Portfolio and photo session requests"

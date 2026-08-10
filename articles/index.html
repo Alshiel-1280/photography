@@ -1,0 +1,31 @@
+---
+layout: default
+body_class: article-page
+title: "撮影事例・準備ガイド | Shioji Ryosuke Photography"
+description: "関西でのポートレート、プロフィール写真、コスプレ撮影について、実際の作例、撮影準備、依頼前に確認したいことを紹介します。"
+og_image: "/images/fulls/P1044114.jpg"
+---
+<div id="wrapper">
+    {% include site-header.html %}
+    <main class="articles-index">
+        <header class="articles-index__header">
+            <div class="article-container">
+                <p class="kicker">Shooting Guide</p>
+                <h1>撮影事例と準備ガイド</h1>
+                <p>実際の作例と、撮影を依頼する前に整理しておくとよい内容をまとめています。</p>
+            </div>
+        </header>
+        <section class="articles-index__list" aria-labelledby="articles-title">
+            <div class="article-container">
+                <h2 id="articles-title">記事一覧</h2>
+                {% assign articles = site.articles | sort: "date" | reverse %}
+                <div class="article-list">
+                    {% for article in articles %}
+                    {% include article-card.html article=article %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+    {% include contact-panel.html %}
+</div>

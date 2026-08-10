@@ -9,6 +9,7 @@ const YAML = require('yaml');
 
 const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'photo-desk-test-'));
 const dataDir = path.join(fixtureRoot, '_data');
+const articlesDir = path.join(fixtureRoot, '_articles');
 const fullsDir = path.join(fixtureRoot, 'images', 'fulls');
 const thumbsDir = path.join(fixtureRoot, 'images', 'thumbs');
 const sourcePath = path.join(fixtureRoot, 'source.png');
@@ -17,6 +18,7 @@ let server;
 
 function createFixture() {
     fs.mkdirSync(dataDir, { recursive: true });
+    fs.mkdirSync(articlesDir, { recursive: true });
     fs.mkdirSync(fullsDir, { recursive: true });
     fs.mkdirSync(thumbsDir, { recursive: true });
 
@@ -102,6 +104,42 @@ async function run() {
     assert.ok(initial.photos.some((photo) => photo.file === '_orphan.jpg' && photo.registered === false));
     assert.strictEqual(initial.photos[0].references.filter((ref) => ref.kind === 'service').length, 1);
     assert.strictEqual(initial.photos[0].references.filter((ref) => ref.kind === 'hero').length, 1);
+
+    const initialArticles = await requestJson('/api/articles');
+    assert.deepStrictEqual(initialArticles.articles, []);
+
+    const articleInput = {
+        slug: 'test-shooting-guide',
+        title: 'Test shooting guide',
+        description: 'A practical test article description for the Photo Desk article editor.',
+        category: '撮影準備',
+        date: '2026-08-10',
+        updated: '2026-08-10',
+        heroFile: 'existing.jpg',
+        heroAlt: 'Existing article hero alt',
+        serviceKey: 'test',
+        published: true,
+        photos: [{ file: 'existing.jpg', alt: 'Existing article gallery alt' }],
+        body: 'This is a test article body with enough content to satisfy the publishing validation. '.repeat(3)
+    };
+    const createdArticle = await requestJson('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(articleInput)
+    });
+    assert.strictEqual(createdArticle.article.slug, articleInput.slug);
+    assert.ok(fs.existsSync(path.join(articlesDir, `${articleInput.slug}.md`)));
+
+    const catalogWithArticle = await requestJson('/api/photos');
+    assert.strictEqual(catalogWithArticle.photos[0].references.filter((ref) => ref.kind === 'articleHero').length, 1);
+    assert.strictEqual(catalogWithArticle.photos[0].references.filter((ref) => ref.kind === 'article').length, 1);
+
+    const updatedArticle = await requestJson(`/api/articles/${articleInput.slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...articleInput, title: 'Updated shooting guide' })
+    });
+    assert.strictEqual(updatedArticle.article.title, 'Updated shooting guide');
 
     const favicon = await request('/favicon.ico');
     assert.strictEqual(favicon.status, 204);
@@ -211,6 +249,9 @@ async function run() {
     assert.ok(!afterDeleteServices.test.photos.some((photo) => photo.file === 'new-photo.jpg'));
     assert.ok(!fs.existsSync(path.join(fullsDir, 'new-photo.jpg')));
     assert.ok(!fs.existsSync(path.join(thumbsDir, 'new-photo.jpg')));
+
+    await requestJson(`/api/articles/${articleInput.slug}`, { method: 'DELETE' });
+    assert.ok(!fs.existsSync(path.join(articlesDir, `${articleInput.slug}.md`)));
 
     console.log('Photo Desk smoke test passed.');
 }

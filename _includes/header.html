@@ -1,6 +1,7 @@
 {% assign page_title = page.title | default: site.title %}
 {% assign page_description = page.description | default: site.description %}
-{% assign og_image = page.og_image | default: site.og_image %}
+{% assign og_image = page.og_image | default: page.hero_image | default: site.og_image %}
+{% assign og_type = page.og_type | default: 'website' %}
 <title>{{ page_title }}</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
@@ -11,13 +12,18 @@
 <meta property="og:site_name" content="{{ site.title | escape }}"/>
 <meta property="og:title" content="{{ page_title | escape }}"/>
 <meta property="og:description" content="{{ page_description | strip_html | strip_newlines | escape }}"/>
-<meta property="og:type" content="website"/>
+<meta property="og:type" content="{{ og_type }}"/>
 <meta property="og:url" content="{{ page.url | replace: 'index.html', '' | absolute_url }}"/>
 <meta property="og:image" content="{{ og_image | absolute_url }}"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{{ page_title | escape }}"/>
 <meta name="twitter:description" content="{{ page_description | strip_html | strip_newlines | escape }}"/>
 <meta name="twitter:image" content="{{ og_image | absolute_url }}"/>
+{% if page.collection == 'articles' %}
+<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}"/>
+<meta property="article:modified_time" content="{{ page.updated | default: page.date | date_to_xmlschema }}"/>
+<meta property="article:author" content="{{ site.author | escape }}"/>
+{% endif %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

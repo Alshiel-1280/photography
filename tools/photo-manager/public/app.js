@@ -14,14 +14,22 @@ const state = {
     photos: [],
     services: [],
     pending: [],
+    articles: [],
     selected: null,
+    selectedArticle: null,
+    mode: 'photos',
     toastTimer: null,
     detailImageRequest: 0,
     imageObserver: null
 };
 
 const elements = {
+    photosModeButton: document.getElementById('photos-mode-button'),
+    articlesModeButton: document.getElementById('articles-mode-button'),
+    photoWorkspace: document.getElementById('photo-workspace'),
+    articleWorkspace: document.getElementById('article-workspace'),
     addButton: document.getElementById('add-button'),
+    newArticleButton: document.getElementById('new-article-button'),
     catalog: document.querySelector('.catalog'),
     fileInput: document.getElementById('file-input'),
     searchInput: document.getElementById('search-input'),
@@ -66,6 +74,37 @@ const elements = {
     cancelButton: document.getElementById('cancel-button'),
     saveButton: document.getElementById('save-button'),
     saveState: document.getElementById('save-state'),
+    articleSearchInput: document.getElementById('article-search-input'),
+    articleCount: document.getElementById('article-count'),
+    articleList: document.getElementById('article-list'),
+    articleEmpty: document.getElementById('article-empty'),
+    articleForm: document.getElementById('article-form'),
+    articleFile: document.getElementById('article-file'),
+    articleFormHeading: document.getElementById('article-form-heading'),
+    articleStatusBadge: document.getElementById('article-status-badge'),
+    articleTitle: document.getElementById('article-title'),
+    articleDescription: document.getElementById('article-description'),
+    articleDescriptionCount: document.getElementById('article-description-count'),
+    articleBody: document.getElementById('article-body'),
+    articleSlug: document.getElementById('article-slug'),
+    articleCategory: document.getElementById('article-category'),
+    articleDate: document.getElementById('article-date'),
+    articleUpdated: document.getElementById('article-updated'),
+    articleService: document.getElementById('article-service'),
+    articlePublished: document.getElementById('article-published'),
+    articleHero: document.getElementById('article-hero'),
+    articleHeroPreview: document.getElementById('article-hero-preview'),
+    articleHeroAlt: document.getElementById('article-hero-alt'),
+    articlePhotoSearchInput: document.getElementById('article-photo-search-input'),
+    articlePhotoOptions: document.getElementById('article-photo-options'),
+    articlePhotoCount: document.getElementById('article-photo-count'),
+    deleteArticleButton: document.getElementById('delete-article-button'),
+    cancelArticleButton: document.getElementById('cancel-article-button'),
+    saveArticleButton: document.getElementById('save-article-button'),
+    deleteArticleDialog: document.getElementById('delete-article-dialog'),
+    deleteArticleDialogDescription: document.getElementById('delete-article-dialog-description'),
+    deleteArticleCancelButton: document.getElementById('delete-article-cancel-button'),
+    deleteArticleConfirmButton: document.getElementById('delete-article-confirm-button'),
     toast: document.getElementById('toast')
 };
 
@@ -123,6 +162,8 @@ function filteredItems() {
             return item.references.some((itemReference) => itemReference.kind === 'service');
         if (reference === 'hero')
             return item.references.some((itemReference) => itemReference.kind === 'hero');
+        if (reference === 'article')
+            return item.references.some((itemReference) => itemReference.kind === 'article' || itemReference.kind === 'articleHero');
         if (reference === 'unreferenced')
             return serviceReferences(item).length === 0;
         return true;
@@ -648,6 +689,329 @@ async function loadCatalog() {
     renderCatalog();
 }
 
+function today() {
+    const date = new Date();
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 10);
+}
+
+function switchMode(mode) {
+    state.mode = mode;
+    const photosActive = mode === 'photos';
+    elements.photoWorkspace.hidden = !photosActive;
+    elements.articleWorkspace.hidden = photosActive;
+    elements.addButton.hidden = !photosActive;
+    elements.newArticleButton.hidden = photosActive;
+    elements.photosModeButton.classList.toggle('is-active', photosActive);
+    elements.articlesModeButton.classList.toggle('is-active', !photosActive);
+    elements.photosModeButton.setAttribute('aria-pressed', String(photosActive));
+    elements.articlesModeButton.setAttribute('aria-pressed', String(!photosActive));
+    elements.saveState.textContent = '';
+}
+
+function filteredArticles() {
+    const query = elements.articleSearchInput.value.trim().toLocaleLowerCase('ja');
+    if (!query)
+        return state.articles;
+    return state.articles.filter((article) => [article.title, article.category, article.description, article.body]
+        .join(' ')
+        .toLocaleLowerCase('ja')
+        .includes(query));
+}
+
+function renderArticleList() {
+    const articles = filteredArticles();
+    elements.articleList.replaceChildren();
+    elements.articleCount.textContent = `${articles.length}件`;
+
+    if (articles.length === 0) {
+        const empty = makeElement('p', 'article-list-empty', '記事がありません。');
+        elements.articleList.append(empty);
+        return;
+    }
+
+    articles.forEach((article) => {
+        const button = makeElement('button', 'article-list-item');
+        button.type = 'button';
+        if (state.selectedArticle && !state.selectedArticle.isNew && state.selectedArticle.slug === article.slug)
+            button.classList.add('is-selected');
+        button.append(makeElement('strong', '', article.title));
+        const meta = makeElement('div', 'article-list-item-meta');
+        meta.append(makeElement('span', '', `${article.category} · ${article.date}`));
+        meta.append(makeElement(
+            'span',
+            `article-list-item-status${article.published ? ' is-published' : ''}`,
+            article.published ? '公開' : '下書き'
+        ));
+        button.append(meta);
+        button.addEventListener('click', () => openArticle(article));
+        elements.articleList.append(button);
+    });
+}
+
+function renderArticleServices() {
+    const currentValue = elements.articleService.value;
+    elements.articleService.replaceChildren();
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.textContent = '撮影依頼一覧';
+    elements.articleService.append(empty);
+    state.services.forEach((service) => {
+        const option = document.createElement('option');
+        option.value = service.key;
+        option.textContent = service.name;
+        elements.articleService.append(option);
+    });
+    elements.articleService.value = currentValue;
+}
+
+function articleSelectedPhotoFiles() {
+    return new Set(Array.from(elements.articlePhotoOptions.querySelectorAll('input:checked')).map((input) => input.value));
+}
+
+function updateArticlePhotoCount() {
+    elements.articlePhotoCount.textContent = `${articleSelectedPhotoFiles().size}枚`;
+}
+
+function renderArticlePhotoOptions(selectedFiles) {
+    const selected = selectedFiles || articleSelectedPhotoFiles();
+    const query = elements.articlePhotoSearchInput.value.trim().toLocaleLowerCase('ja');
+    elements.articlePhotoOptions.replaceChildren();
+
+    state.photos.filter((photo) => photo.registered).forEach((photo) => {
+        const haystack = [photo.title, photo.alt, photo.file, photo.area].join(' ').toLocaleLowerCase('ja');
+        if (query && !haystack.includes(query))
+            return;
+        const label = makeElement('label', 'article-photo-option');
+        const image = document.createElement('img');
+        image.src = photo.thumbUrl;
+        image.alt = '';
+        image.loading = 'lazy';
+        const text = makeElement('span', '', photo.title || photo.file);
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = photo.file;
+        checkbox.checked = selected.has(photo.file);
+        checkbox.addEventListener('change', updateArticlePhotoCount);
+        label.append(image, text, checkbox);
+        elements.articlePhotoOptions.append(label);
+    });
+    updateArticlePhotoCount();
+}
+
+function renderArticleHeroOptions() {
+    const current = elements.articleHero.value;
+    elements.articleHero.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = '写真を選択';
+    elements.articleHero.append(placeholder);
+    state.photos.filter((photo) => photo.registered).forEach((photo) => {
+        const option = document.createElement('option');
+        option.value = photo.file;
+        option.textContent = `${photo.title || photo.file} (${photo.file})`;
+        elements.articleHero.append(option);
+    });
+    elements.articleHero.value = current;
+}
+
+function updateArticleHero(fillAlt = false) {
+    const photo = state.photos.find((item) => item.file === elements.articleHero.value);
+    elements.articleHeroPreview.replaceChildren();
+    if (!photo) {
+        elements.articleHeroPreview.append(makeElement('span', '', '写真を選択してください'));
+        return;
+    }
+    const image = document.createElement('img');
+    image.src = photo.thumbUrl;
+    image.alt = photo.alt || photo.title;
+    elements.articleHeroPreview.append(image);
+    if (fillAlt)
+        elements.articleHeroAlt.value = photo.alt || photo.title;
+}
+
+function updateArticleStatus() {
+    const published = elements.articlePublished.checked;
+    elements.articleStatusBadge.textContent = published ? '公開' : '下書き';
+    elements.articleStatusBadge.classList.toggle('is-published', published);
+}
+
+function updateArticleDescriptionCount() {
+    elements.articleDescriptionCount.textContent = `${Array.from(elements.articleDescription.value).length} / 180`;
+}
+
+function openArticle(article) {
+    state.selectedArticle = { ...article, isNew: false };
+    elements.articleEmpty.hidden = true;
+    elements.articleForm.hidden = false;
+    elements.articleFile.textContent = `_articles/${article.slug}.md`;
+    elements.articleFormHeading.textContent = '記事を編集';
+    elements.articleTitle.value = article.title;
+    elements.articleDescription.value = article.description;
+    elements.articleBody.value = article.body;
+    elements.articleSlug.value = article.slug;
+    elements.articleSlug.disabled = true;
+    elements.articleCategory.value = article.category;
+    elements.articleDate.value = article.date;
+    elements.articleUpdated.value = article.updated;
+    elements.articleService.value = article.serviceKey;
+    elements.articlePublished.checked = article.published;
+    elements.articleHero.value = article.heroFile;
+    elements.articleHeroAlt.value = article.heroAlt;
+    elements.deleteArticleButton.hidden = false;
+    elements.articlePhotoSearchInput.value = '';
+    renderArticlePhotoOptions(new Set(article.photos.map((photo) => photo.file)));
+    updateArticleHero();
+    updateArticleStatus();
+    updateArticleDescriptionCount();
+    renderArticleList();
+}
+
+function newArticle() {
+    const date = today();
+    const article = {
+        slug: `article-${date.replaceAll('-', '')}`,
+        title: '',
+        description: '',
+        category: '撮影ガイド',
+        date,
+        updated: date,
+        heroFile: '',
+        heroAlt: '',
+        serviceKey: '',
+        published: false,
+        photos: [],
+        body: '',
+        isNew: true
+    };
+    state.selectedArticle = article;
+    elements.articleEmpty.hidden = true;
+    elements.articleForm.hidden = false;
+    elements.articleFile.textContent = '新しい記事';
+    elements.articleFormHeading.textContent = '記事を作成';
+    elements.articleTitle.value = '';
+    elements.articleDescription.value = '';
+    elements.articleBody.value = '';
+    elements.articleSlug.value = article.slug;
+    elements.articleSlug.disabled = false;
+    elements.articleCategory.value = article.category;
+    elements.articleDate.value = date;
+    elements.articleUpdated.value = date;
+    elements.articleService.value = '';
+    elements.articlePublished.checked = false;
+    elements.articleHero.value = '';
+    elements.articleHeroAlt.value = '';
+    elements.deleteArticleButton.hidden = true;
+    elements.articlePhotoSearchInput.value = '';
+    renderArticlePhotoOptions(new Set());
+    updateArticleHero();
+    updateArticleStatus();
+    updateArticleDescriptionCount();
+    renderArticleList();
+    elements.articleTitle.focus();
+}
+
+function closeArticle() {
+    state.selectedArticle = null;
+    elements.articleForm.hidden = true;
+    elements.articleEmpty.hidden = false;
+    renderArticleList();
+}
+
+function articleFormData() {
+    const selectedFiles = articleSelectedPhotoFiles();
+    return {
+        slug: elements.articleSlug.value.trim(),
+        title: elements.articleTitle.value.trim(),
+        description: elements.articleDescription.value.trim(),
+        category: elements.articleCategory.value.trim(),
+        date: elements.articleDate.value,
+        updated: elements.articleUpdated.value,
+        serviceKey: elements.articleService.value,
+        published: elements.articlePublished.checked,
+        heroFile: elements.articleHero.value,
+        heroAlt: elements.articleHeroAlt.value.trim(),
+        photos: state.photos.filter((photo) => selectedFiles.has(photo.file)).map((photo) => ({
+            file: photo.file,
+            alt: photo.alt
+        })),
+        body: elements.articleBody.value.trim()
+    };
+}
+
+async function saveArticle(event) {
+    event.preventDefault();
+    const selected = state.selectedArticle;
+    if (!selected)
+        return;
+    const data = articleFormData();
+    elements.saveArticleButton.disabled = true;
+    elements.cancelArticleButton.disabled = true;
+    elements.saveState.textContent = '記事を保存しています…';
+    try {
+        const response = await fetch(selected.isNew ? '/api/articles' : `/api/articles/${encodeURIComponent(selected.slug)}`, {
+            method: selected.isNew ? 'POST' : 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (!response.ok)
+            throw new Error(result.error || '記事を保存できませんでした。');
+        await Promise.all([loadArticles(), loadCatalog()]);
+        const saved = state.articles.find((article) => article.slug === result.article.slug);
+        if (saved)
+            openArticle(saved);
+        showToast(data.published ? '記事を保存し、公開対象にしました。' : '記事を下書き保存しました。');
+    } catch (error) {
+        showToast(error.message, true);
+    } finally {
+        elements.saveArticleButton.disabled = false;
+        elements.cancelArticleButton.disabled = false;
+        elements.saveState.textContent = '';
+    }
+}
+
+function requestDeleteArticle() {
+    if (!state.selectedArticle || state.selectedArticle.isNew)
+        return;
+    elements.deleteArticleDialogDescription.textContent = `「${state.selectedArticle.title}」を削除します。この操作は取り消せません。`;
+    elements.deleteArticleDialog.showModal();
+}
+
+async function deleteArticle() {
+    const selected = state.selectedArticle;
+    if (!selected || selected.isNew)
+        return;
+    elements.deleteArticleDialog.close();
+    elements.saveState.textContent = '記事を削除しています…';
+    try {
+        const response = await fetch(`/api/articles/${encodeURIComponent(selected.slug)}`, { method: 'DELETE' });
+        const result = await response.json();
+        if (!response.ok)
+            throw new Error(result.error || '記事を削除できませんでした。');
+        await Promise.all([loadArticles(), loadCatalog()]);
+        closeArticle();
+        showToast('記事を削除しました。');
+    } catch (error) {
+        showToast(error.message, true);
+    } finally {
+        elements.saveState.textContent = '';
+    }
+}
+
+async function loadArticles() {
+    const response = await fetch('/api/articles', { cache: 'no-store' });
+    const result = await response.json();
+    if (!response.ok)
+        throw new Error(result.error || '記事一覧を読み込めませんでした。');
+    state.articles = result.articles;
+    if (state.services.length === 0)
+        state.services = result.services;
+    renderArticleServices();
+    renderArticleHeroOptions();
+    renderArticleList();
+}
+
 function updateAltCount() {
     elements.altCount.textContent = `${Array.from(elements.photoAlt.value).length}文字`;
 }
@@ -682,9 +1046,22 @@ elements.deleteCancelButton.addEventListener('click', () => elements.deleteDialo
 elements.deleteConfirmButton.addEventListener('click', deleteSelected);
 elements.detailForm.addEventListener('submit', saveSelected);
 elements.photoAlt.addEventListener('input', updateAltCount);
+elements.photosModeButton.addEventListener('click', () => switchMode('photos'));
+elements.articlesModeButton.addEventListener('click', () => switchMode('articles'));
+elements.newArticleButton.addEventListener('click', newArticle);
+elements.articleSearchInput.addEventListener('input', renderArticleList);
+elements.articlePhotoSearchInput.addEventListener('input', () => renderArticlePhotoOptions());
+elements.articleHero.addEventListener('change', () => updateArticleHero(true));
+elements.articleDescription.addEventListener('input', updateArticleDescriptionCount);
+elements.articlePublished.addEventListener('change', updateArticleStatus);
+elements.articleForm.addEventListener('submit', saveArticle);
+elements.cancelArticleButton.addEventListener('click', closeArticle);
+elements.deleteArticleButton.addEventListener('click', requestDeleteArticle);
+elements.deleteArticleCancelButton.addEventListener('click', () => elements.deleteArticleDialog.close());
+elements.deleteArticleConfirmButton.addEventListener('click', deleteArticle);
 window.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && state.selected)
         closeDetail();
 });
 
-loadCatalog().catch((error) => showToast(error.message, true));
+Promise.all([loadCatalog(), loadArticles()]).catch((error) => showToast(error.message, true));

@@ -1,0 +1,96 @@
+---
+layout: default
+---
+<div id="wrapper">
+    {% include site-header.html %}
+    <main class="article-detail">
+        <nav class="article-breadcrumb article-container" aria-label="パンくずリスト">
+            <a href="{{ '/' | relative_url }}">作例</a>
+            <span aria-hidden="true">/</span>
+            <a href="{{ '/articles/' | relative_url }}">撮影ガイド</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{{ page.title }}</span>
+        </nav>
+
+        <header class="article-hero">
+            <img src="{{ page.hero_image | relative_url }}" alt="{{ page.hero_alt | default: page.title | escape }}" fetchpriority="high" decoding="async" />
+            <div class="article-hero__overlay">
+                <div class="article-container">
+                    <div class="article-meta">
+                        <span>{{ page.category | default: '撮影ガイド' }}</span>
+                        <time datetime="{{ page.date | date_to_xmlschema }}">公開 {{ page.date | date: "%Y年%-m月%-d日" }}</time>
+                        {% assign published_day = page.date | date: "%Y-%m-%d" %}
+                        {% assign updated_day = page.updated | date: "%Y-%m-%d" %}
+                        {% if page.updated and updated_day != published_day %}<time datetime="{{ page.updated | date_to_xmlschema }}">更新 {{ page.updated | date: "%Y年%-m月%-d日" }}</time>{% endif %}
+                    </div>
+                    <h1>{{ page.title }}</h1>
+                    <p>{{ page.description }}</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="article-body article-container">
+            <article class="article-content">
+                {{ content }}
+            </article>
+
+            {% if page.photos and page.photos.size > 0 %}
+            <section class="article-gallery" aria-labelledby="article-gallery-title">
+                <h2 id="article-gallery-title">関連する作例</h2>
+                <div class="article-gallery__grid">
+                    {% for photo in page.photos %}
+                    <figure>
+                        <a href="{{ site.image_fulls_loc | append: '/' | append: photo.file | relative_url }}">
+                            <img src="{{ site.image_thumbs_loc | append: '/' | append: photo.file | relative_url }}" alt="{{ photo.alt | escape }}" loading="lazy" decoding="async" />
+                        </a>
+                        <figcaption>{{ photo.alt }}</figcaption>
+                    </figure>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <aside class="article-cta" aria-labelledby="article-cta-title">
+                <p class="kicker">Photo Session</p>
+                <h2 id="article-cta-title">撮影について相談する</h2>
+                <p>希望する写真の用途、時期、場所、雰囲気が決まっている範囲でお知らせください。</p>
+                <ul class="actions">
+                    {% if page.service_key %}
+                    <li><a class="button" href="{{ '/request/' | append: page.service_key | append: '/' | relative_url }}">対応する撮影依頼を見る</a></li>
+                    {% else %}
+                    <li><a class="button" href="{{ '/request/' | relative_url }}">撮影依頼を見る</a></li>
+                    {% endif %}
+                    <li><a class="button special" href="#footer">お問い合わせ</a></li>
+                </ul>
+            </aside>
+        </div>
+    </main>
+    {% include contact-panel.html %}
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ page.title | jsonify }},
+  "description": {{ page.description | jsonify }},
+  "image": {{ page.hero_image | absolute_url | jsonify }},
+  "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
+  "dateModified": {{ page.updated | default: page.date | date_to_xmlschema | jsonify }},
+  "mainEntityOfPage": {{ page.url | absolute_url | jsonify }},
+  "author": {"@type": "Person", "name": {{ site.author | jsonify }}},
+  "publisher": {"@type": "Person", "name": {{ site.author | jsonify }}},
+  "about": {{ page.category | default: '写真撮影' | jsonify }}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"作例","item":{{ "/" | absolute_url | jsonify }}},
+    {"@type":"ListItem","position":2,"name":"撮影ガイド","item":{{ "/articles/" | absolute_url | jsonify }}},
+    {"@type":"ListItem","position":3,"name":{{ page.title | jsonify }},"item":{{ page.url | absolute_url | jsonify }}}
+  ]
+}
+</script>

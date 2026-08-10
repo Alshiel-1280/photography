@@ -27,5 +27,27 @@ layout: null
     {% endfor %}
   </url>
   {% endfor %}
+  <url><loc>{{ "/articles/" | absolute_url }}</loc></url>
+  {% assign published_articles = site.articles | sort: "date" | reverse %}
+  {% for article in published_articles %}
+  <url>
+    <loc>{{ article.url | absolute_url }}</loc>
+    <lastmod>{{ article.updated | default: article.date | date_to_xmlschema }}</lastmod>
+    {% if article.hero_image %}
+    <image:image>
+      <image:loc>{{ article.hero_image | absolute_url }}</image:loc>
+      <image:title>{{ article.title | xml_escape }}</image:title>
+      <image:caption>{{ article.description | xml_escape }}</image:caption>
+    </image:image>
+    {% endif %}
+    {% for photo in article.photos %}
+    <image:image>
+      <image:loc>{{ site.image_fulls_loc | append: "/" | append: photo.file | absolute_url }}</image:loc>
+      <image:title>{{ article.title | xml_escape }}</image:title>
+      <image:caption>{{ photo.alt | xml_escape }}</image:caption>
+    </image:image>
+    {% endfor %}
+  </url>
+  {% endfor %}
   <url><loc>{{ "/privacy/" | absolute_url }}</loc></url>
 </urlset>
